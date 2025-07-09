@@ -9,7 +9,11 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function buildUtmUrl(fields: typeof initialFields) {
   if (!fields.url || !fields.source || !fields.medium || !fields.campaign) return "";
-  const url = new URL(fields.url);
+  let urlStr = fields.url.trim();
+  if (!/^https?:\/\//i.test(urlStr)) {
+    urlStr = "https://" + urlStr;
+  }
+  const url = new URL(urlStr);
   url.searchParams.set("utm_source", fields.source);
   url.searchParams.set("utm_medium", fields.medium);
   url.searchParams.set("utm_campaign", fields.campaign);
