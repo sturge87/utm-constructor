@@ -109,11 +109,20 @@ const contentOptions = [
   { value: "other", label: "Other" },
 ];
 
+type UTM = {
+  id: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_content?: string | null;
+  created_at: string;
+};
+
 export default function Home() {
   const [fields, setFields] = useState(initialFields);
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [copied, setCopied] = useState(false);
-  const [savedUtms, setSavedUtms] = useState<any[]>([]);
+  const [savedUtms, setSavedUtms] = useState<UTM[]>([]);
   const [loadingUtms, setLoadingUtms] = useState(false);
 
   useEffect(() => {
