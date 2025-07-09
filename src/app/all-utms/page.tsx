@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
-// @ts-ignore
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
