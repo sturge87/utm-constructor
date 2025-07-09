@@ -109,6 +109,57 @@ const contentOptions = [
   { value: "other", label: "Other" },
 ];
 
+// Campaign dropdown options
+const campaignOptions = [
+  { value: "soqr25", label: "SOQR25" },
+  { value: "katalon_ai", label: "Katalon AI" },
+  { value: "M2A", label: "Manual to Automated (M2A)" },
+  { value: "OS2K", label: "Open source to Katalon (OS2K)" },
+  { value: "abm", label: "Signal Based ABM" },
+  { value: "competitor_replacement", label: "Competitor Replacement" },
+  { value: "brand", label: "Brand" },
+];
+
+// Map sources to allowed mediums
+const sourceToMedium: Record<string, string[]> = {
+  google: ["cpc", "organic", "display", "video", "referral"],
+  facebook: ["social", "cpc", "display", "video"],
+  instagram: ["social", "cpc", "display", "video"],
+  linkedin: ["social", "cpc", "display"],
+  twitter: ["social", "cpc", "display"],
+  tiktok: ["social", "cpc", "video"],
+  newsletter: ["email"],
+  youtube: ["video", "display", "cpc"],
+  pinterest: ["social", "cpc", "display"],
+  snapchat: ["social", "cpc", "video"],
+  reddit: ["social", "cpc", "display"],
+  quora: ["social", "cpc", "display"],
+  whatsapp: ["social"],
+  slack: ["social"],
+  discord: ["social"],
+  affiliate: ["affiliate", "referral"],
+  partner: ["affiliate", "referral"],
+  referral: ["referral"],
+  display: ["display", "banner", "native"],
+  direct: ["direct"],
+  other: mediumOptions.map(m => m.value),
+};
+
+// Map mediums to allowed content
+const mediumToContent: Record<string, string[]> = {
+  cpc: ["search_ad", "banner_ad", "text_link", "remarketing", "retargeting"],
+  social: ["feed", "story", "carousel", "video_ad", "sponsored_post", "native_ad"],
+  email: ["newsletter_top", "newsletter_bottom", "newsletter_sidebar", "cta_button", "promo_code"],
+  display: ["banner_ad", "display_ad", "native_ad", "video_ad", "popup", "interstitial"],
+  video: ["video_ad", "carousel", "sponsored_post"],
+  referral: ["lead_form", "feature_box", "product_tile", "text_link"],
+  affiliate: ["banner_ad", "text_link", "promo_code"],
+  banner: ["banner_ad"],
+  native: ["native_ad"],
+  direct: ["cta_button", "promo_code"],
+  other: contentOptions.map(c => c.value),
+};
+
 type UTM = {
   id: string;
   utm_source: string;
@@ -208,6 +259,12 @@ export default function Home() {
     (filterSource === "all" || utm.utm_source === filterSource)
   );
 
+  // Compute filtered mediums and content based on selection
+  const allowedMediums = fields.source ? (sourceToMedium[fields.source] || []) : mediumOptions.map(m => m.value);
+  const filteredMediumOptions = mediumOptions.filter(m => allowedMediums.includes(m.value));
+  const allowedContent = fields.medium ? (mediumToContent[fields.medium] || []) : contentOptions.map(c => c.value);
+  const filteredContentOptions = contentOptions.filter(c => allowedContent.includes(c.value));
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <h1 className="text-3xl font-bold mb-6">UTM URL Generator</h1>
@@ -249,6 +306,24 @@ export default function Home() {
               </select>
             </div>
             <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="campaign">
+                Campaign Name (utm_campaign) <span className="text-red-500">*</span>
+              </label>
+              <select
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="campaign"
+                name="campaign"
+                required
+                value={fields.campaign}
+                onChange={handleChange}
+              >
+                <option value="" disabled>Select campaign</option>
+                {campaignOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medium">
                 Campaign Medium (utm_medium) <span className="text-red-500">*</span>
               </label>
@@ -261,25 +336,10 @@ export default function Home() {
                 onChange={handleChange}
               >
                 <option value="" disabled>Select medium</option>
-                {mediumOptions.map(opt => (
+                {filteredMediumOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="campaign">
-                Campaign Name (utm_campaign) <span className="text-red-500">*</span>
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="campaign"
-                name="campaign"
-                type="text"
-                required
-                value={fields.campaign}
-                onChange={handleChange}
-                placeholder="e.g. spring_sale"
-              />
             </div>
             <div>
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
@@ -293,7 +353,7 @@ export default function Home() {
                 onChange={handleChange}
               >
                 <option value="" disabled>Select content</option>
-                {contentOptions.map(opt => (
+                {filteredContentOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
