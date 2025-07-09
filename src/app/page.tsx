@@ -27,40 +27,52 @@ const initialFields = {
 
 // UTM source options
 const sourceOptions = [
-  "google", "bing", "linkedin", "reddit", "meta", "youtube", "quora", "g2", "capterra",
-  "google-organic", "bing-organic", "linkedin-organic", "reddit-organic", "youtube-organic",
-  "referral", "newsletter", "community", "academy", "docs"
+  "google", "bing", "linkedin", "meta", "reddit", "youtube", "quora", "g2", "capterra",
+  "newsletter", "community", "academy", "docs", "product", "github", "blog"
 ];
 
-// UTM medium options and valid sources
-const mediumToSources: Record<string, string[]> = {
-  "cpc": ["google", "bing"],
-  "paid-social": ["linkedin", "meta", "reddit"],
-  "display": ["google", "meta"],
-  "video": ["youtube"],
-  "native": ["quora"],
-  "sponsored": ["g2", "capterra"],
-  "email": ["newsletter"],
-  "internal-link": ["academy", "community", "docs"],
-  "product-message": ["academy", "docs"],
-  "organic": ["google-organic", "bing-organic", "linkedin-organic", "reddit-organic", "youtube-organic"],
-  "referral": ["referral", "community"]
+// UTM medium options by source
+const mediumBySource: Record<string, string[]> = {
+  "google": ["cpc", "display", "retargeting", "pmax"],
+  "bing": ["cpc"],
+  "linkedin": ["paid-social", "retargeting", "lead-gen"],
+  "meta": ["paid-social", "retargeting", "display"],
+  "reddit": ["paid-social", "retargeting", "referral"],
+  "youtube": ["video", "retargeting", "referral"],
+  "quora": ["native"],
+  "g2": ["sponsored"],
+  "capterra": ["sponsored"],
+  "newsletter": ["email", "nurture", "product-update"],
+  "community": ["referral", "internal-link", "engagement"],
+  "academy": ["internal-link", "product-message", "onboarding"],
+  "docs": ["internal-link", "product-message", "technical-content"],
+  "product": ["product-message", "in-app-banner"],
+  "github": ["referral", "technical"],
+  "blog": ["internal-link", "thought-leadership", "seo-cta", "referral"]
 };
-const mediumOptions = Object.keys(mediumToSources).map(m => ({ value: m, label: m }));
 
 // UTM content options by medium
 const contentByMedium: Record<string, string[]> = {
-  "cpc": ["retargeting", "competitor-keywords", "ai-testing", "bottom-funnel", "desktop-download"],
-  "paid-social": ["top-funnel", "mid-funnel", "bottom-funnel", "visual-testing", "mobile-signup"],
-  "display": ["retargeting", "ai-testing", "desktop-download"],
-  "video": ["product-demo", "feature-tour"],
-  "native": ["thought-leadership", "testing-trends"],
-  "sponsored": ["top-software", "lead-gen"],
-  "email": ["welcome-series", "product-update", "webinar-invite", "academy-promo"],
-  "internal-link": ["homepage-banner", "academy-crosslink", "blog-cta"],
-  "product-message": ["feature-promo", "chatbot-nudge"],
-  "organic": ["n/a"],
-  "referral": ["n/a"]
+  "cpc": ["search-top", "search-brand", "competitor-keywords", "bottom-funnel", "desktop-download"],
+  "display": ["ai-testing-banner", "automated-testing-banner", "retargeting-static"],
+  "retargeting": ["cart-abandon", "engaged-return", "ebook-download"],
+  "pmax": ["auto-targeting", "branded-intent", "cross-device"],
+  "paid-social": ["testimonial-video", "carousel-top", "offer-promo", "signup-lead"],
+  "video": ["feature-tour", "product-demo", "testing-trends"],
+  "native": ["thought-leadership", "checklist-offer"],
+  "sponsored": ["grid-placement", "featured-slot", "comparison-page"],
+  "email": ["welcome-series", "product-update", "event-invite", "newsletter-feature"],
+  "nurture": ["mid-funnel-content", "value-prop-promo", "case-study"],
+  "product-message": ["modal-feature-promo", "in-app-promo", "chatbot-trigger"],
+  "in-app-banner": ["upgrade-promo", "start-trial-cta"],
+  "internal-link": ["blog-cta", "academy-crosslink", "footer-cta", "sidebar-banner"],
+  "referral": ["community-article", "youtube-video-link", "reddit-thread", "github-readme"],
+  "technical": ["api-guide", "cli-docs", "integration-howto"],
+  "technical-content": ["assertion-library", "data-driven-guide"],
+  "onboarding": ["academy-intro", "tooling-setup", "quickstart"],
+  "seo-cta": ["bottom-blog-banner", "mid-article-card"],
+  "thought-leadership": ["2025-testing-report", "ai-in-testing-whitepaper"],
+  "lead-gen": ["form-fill-ebook", "webinar-registration"]
 };
 
 // Campaign dropdown options
@@ -174,9 +186,7 @@ export default function Home() {
   );
 
   // Compute filtered mediums and content based on selection
-  const filteredMediumOptions = mediumOptions.filter(m =>
-    fields.source && mediumToSources[m.value]?.includes(fields.source)
-  );
+  const filteredMediumOptions = fields.source ? (mediumBySource[fields.source] || []) : [];
   const filteredContentOptions = fields.medium ? (contentByMedium[fields.medium] || []) : [];
 
   return (
@@ -252,7 +262,7 @@ export default function Home() {
               >
                 <option value="" disabled>Select medium</option>
                 {filteredMediumOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
             </div>
