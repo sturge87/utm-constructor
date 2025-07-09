@@ -124,6 +124,7 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [savedUtms, setSavedUtms] = useState<UTM[]>([]);
   const [loadingUtms, setLoadingUtms] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (fields.url) {
@@ -180,6 +181,19 @@ export default function Home() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     }
+  };
+
+  const handleCopySaved = async (utm: UTM) => {
+    const url = buildUtmUrl({
+      url: fields.url,
+      source: utm.utm_source,
+      medium: utm.utm_medium,
+      campaign: utm.utm_campaign,
+      content: utm.utm_content || "",
+    });
+    await navigator.clipboard.writeText(url);
+    setCopiedId(utm.id);
+    setTimeout(() => setCopiedId(null), 1500);
   };
 
   return (
@@ -304,12 +318,36 @@ export default function Home() {
           <div className="text-gray-500">No UTMs found for this URL.</div>
         ) : (
           <ul className="space-y-2">
-            {savedUtms.map((utm) => (
-              <li key={utm.id} className="bg-white border rounded p-2 text-xs flex flex-col">
-                <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
-                <span className="text-gray-400">{new Date(utm.created_at).toLocaleString()}</span>
-              </li>
-            ))}
+            {savedUtms.map((utm) => {
+              const url = buildUtmUrl({
+                url: fields.url,
+                source: utm.utm_source,
+                medium: utm.utm_medium,
+                campaign: utm.utm_campaign,
+                content: utm.utm_content || "",
+              });
+              return (
+                <li key={utm.id} className="bg-white border rounded p-2 text-xs flex flex-col gap-1">
+                  <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
+                  <span className="text-gray-400">{new Date(utm.created_at).toLocaleString()}</span>
+                  <div className="flex gap-2 items-center mt-1">
+                    <input
+                      className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
+                      value={url}
+                      readOnly
+                      onFocus={e => e.target.select()}
+                    />
+                    <button
+                      className={`px-2 py-1 rounded bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                      onClick={() => handleCopySaved(utm)}
+                      type="button"
+                    >
+                      {copiedId === utm.id ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
