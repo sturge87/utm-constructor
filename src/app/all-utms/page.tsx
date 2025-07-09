@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+// @ts-ignore
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -17,6 +19,15 @@ type UTM = {
   created_at: string;
 };
 
+function buildUtmUrl(utm: UTM) {
+  const url = new URL(utm.website_url);
+  url.searchParams.set("utm_source", utm.utm_source);
+  url.searchParams.set("utm_medium", utm.utm_medium);
+  url.searchParams.set("utm_campaign", utm.utm_campaign);
+  if (utm.utm_content) url.searchParams.set("utm_content", utm.utm_content);
+  return url.toString();
+}
+
 export default function AllUtmsPage() {
   const [utms, setUtms] = useState<UTM[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +38,7 @@ export default function AllUtmsPage() {
     utm_campaign: "",
     utm_content: "",
   });
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -54,6 +66,13 @@ export default function AllUtmsPage() {
   const mediums = unique(utms.map(u => u.utm_medium));
   const campaigns = unique(utms.map(u => u.utm_campaign));
   const contents = unique(utms.map(u => u.utm_content || ""));
+
+  const handleCopy = async (utm: UTM) => {
+    const url = buildUtmUrl(utm);
+    await navigator.clipboard.writeText(url);
+    setCopiedId(utm.id);
+    setTimeout(() => setCopiedId(null), 1500);
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 p-4">
@@ -105,30 +124,40 @@ export default function AllUtmsPage() {
           <div className="text-gray-500">No UTMs found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full text-xs border">
-              <thead>
-                <tr className="bg-[#19d89f] text-white">
-                  <th className="p-2 border">Website URL</th>
-                  <th className="p-2 border">Source</th>
-                  <th className="p-2 border">Medium</th>
-                  <th className="p-2 border">Campaign</th>
-                  <th className="p-2 border">Content</th>
-                  <th className="p-2 border">Created</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-[#19d89f] text-white">
+                  <TableHead className="p-2 border">Website URL</TableHead>
+                  <TableHead className="p-2 border">Source</TableHead>
+                  <TableHead className="p-2 border">Medium</TableHead>
+                  <TableHead className="p-2 border">Campaign</TableHead>
+                  <TableHead className="p-2 border">Content</TableHead>
+                  <TableHead className="p-2 border">Created</TableHead>
+                  <TableHead className="p-2 border">Copy</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredUtms.map(utm => (
-                  <tr key={utm.id} className="even:bg-gray-50">
-                    <td className="p-2 border break-all">{utm.website_url}</td>
-                    <td className="p-2 border">{utm.utm_source}</td>
-                    <td className="p-2 border">{utm.utm_medium}</td>
-                    <td className="p-2 border">{utm.utm_campaign}</td>
-                    <td className="p-2 border">{utm.utm_content}</td>
-                    <td className="p-2 border text-gray-400">{new Date(utm.created_at).toLocaleString()}</td>
-                  </tr>
+                  <TableRow key={utm.id} className="even:bg-gray-50">
+                    <TableCell className="p-2 border break-all">{utm.website_url}</TableCell>
+                    <TableCell className="p-2 border">{utm.utm_source}</TableCell>
+                    <TableCell className="p-2 border">{utm.utm_medium}</TableCell>
+                    <TableCell className="p-2 border">{utm.utm_campaign}</TableCell>
+                    <TableCell className="p-2 border">{utm.utm_content}</TableCell>
+                    <TableCell className="p-2 border text-gray-400">{new Date(utm.created_at).toLocaleString()}</TableCell>
+                    <TableCell className="p-2 border">
+                      <button
+                        className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                        onClick={() => handleCopy(utm)}
+                        type="button"
+                      >
+                        {copiedId === utm.id ? "Copied!" : "Copy"}
+                      </button>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>
