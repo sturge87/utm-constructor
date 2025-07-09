@@ -25,89 +25,43 @@ const initialFields = {
   content: "",
 };
 
+// UTM source options
 const sourceOptions = [
-  { value: "google", label: "Google" },
-  { value: "facebook", label: "Facebook" },
-  { value: "instagram", label: "Instagram" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "twitter", label: "Twitter" },
-  { value: "tiktok", label: "TikTok" },
-  { value: "bing", label: "Bing" },
-  { value: "newsletter", label: "Newsletter" },
-  { value: "youtube", label: "YouTube" },
-  { value: "pinterest", label: "Pinterest" },
-  { value: "snapchat", label: "Snapchat" },
-  { value: "reddit", label: "Reddit" },
-  { value: "quora", label: "Quora" },
-  { value: "whatsapp", label: "WhatsApp" },
-  { value: "slack", label: "Slack" },
-  { value: "discord", label: "Discord" },
-  { value: "affiliate", label: "Affiliate" },
-  { value: "partner", label: "Partner" },
-  { value: "referral", label: "Referral" },
-  { value: "display", label: "Display Network" },
-  { value: "direct", label: "Direct" },
-  { value: "other", label: "Other" },
+  "google", "bing", "linkedin", "reddit", "meta", "youtube", "quora", "g2", "capterra",
+  "google-organic", "bing-organic", "linkedin-organic", "reddit-organic", "youtube-organic",
+  "referral", "newsletter", "community", "academy", "docs"
 ];
 
-const mediumOptions = [
-  { value: "cpc", label: "CPC (Paid Search)" },
-  { value: "ppc", label: "PPC" },
-  { value: "cpm", label: "CPM" },
-  { value: "email", label: "Email" },
-  { value: "social", label: "Social" },
-  { value: "organic", label: "Organic" },
-  { value: "referral", label: "Referral" },
-  { value: "display", label: "Display" },
-  { value: "banner", label: "Banner" },
-  { value: "video", label: "Video" },
-  { value: "native", label: "Native" },
-  { value: "push", label: "Push Notification" },
-  { value: "sms", label: "SMS" },
-  { value: "influencer", label: "Influencer" },
-  { value: "affiliate", label: "Affiliate" },
-  { value: "print", label: "Print" },
-  { value: "podcast", label: "Podcast" },
-  { value: "event", label: "Event" },
-  { value: "app", label: "App" },
-  { value: "qr", label: "QR Code" },
-  { value: "direct", label: "Direct" },
-  { value: "other", label: "Other" },
-];
+// UTM medium options and valid sources
+const mediumToSources: Record<string, string[]> = {
+  "cpc": ["google", "bing"],
+  "paid-social": ["linkedin", "meta", "reddit"],
+  "display": ["google", "meta"],
+  "video": ["youtube"],
+  "native": ["quora"],
+  "sponsored": ["g2", "capterra"],
+  "email": ["newsletter"],
+  "internal-link": ["academy", "community", "docs"],
+  "product-message": ["academy", "docs"],
+  "organic": ["google-organic", "bing-organic", "linkedin-organic", "reddit-organic", "youtube-organic"],
+  "referral": ["referral", "community"]
+};
+const mediumOptions = Object.keys(mediumToSources).map(m => ({ value: m, label: m }));
 
-const contentOptions = [
-  { value: "banner_ad", label: "Banner Ad" },
-  { value: "text_link", label: "Text Link" },
-  { value: "sidebar", label: "Sidebar" },
-  { value: "footer", label: "Footer" },
-  { value: "header", label: "Header" },
-  { value: "cta_button", label: "CTA Button" },
-  { value: "carousel", label: "Carousel" },
-  { value: "video_ad", label: "Video Ad" },
-  { value: "sponsored_post", label: "Sponsored Post" },
-  { value: "native_ad", label: "Native Ad" },
-  { value: "popup", label: "Popup" },
-  { value: "interstitial", label: "Interstitial" },
-  { value: "newsletter_top", label: "Newsletter Top" },
-  { value: "newsletter_bottom", label: "Newsletter Bottom" },
-  { value: "newsletter_sidebar", label: "Newsletter Sidebar" },
-  { value: "product_tile", label: "Product Tile" },
-  { value: "feature_box", label: "Feature Box" },
-  { value: "promo_code", label: "Promo Code" },
-  { value: "app_banner", label: "App Banner" },
-  { value: "story", label: "Story" },
-  { value: "feed", label: "Feed" },
-  { value: "search_ad", label: "Search Ad" },
-  { value: "display_ad", label: "Display Ad" },
-  { value: "remarketing", label: "Remarketing" },
-  { value: "retargeting", label: "Retargeting" },
-  { value: "lead_form", label: "Lead Form" },
-  { value: "survey", label: "Survey" },
-  { value: "quiz", label: "Quiz" },
-  { value: "giveaway", label: "Giveaway" },
-  { value: "contest", label: "Contest" },
-  { value: "other", label: "Other" },
-];
+// UTM content options by medium
+const contentByMedium: Record<string, string[]> = {
+  "cpc": ["retargeting", "competitor-keywords", "ai-testing", "bottom-funnel", "desktop-download"],
+  "paid-social": ["top-funnel", "mid-funnel", "bottom-funnel", "visual-testing", "mobile-signup"],
+  "display": ["retargeting", "ai-testing", "desktop-download"],
+  "video": ["product-demo", "feature-tour"],
+  "native": ["thought-leadership", "testing-trends"],
+  "sponsored": ["top-software", "lead-gen"],
+  "email": ["welcome-series", "product-update", "webinar-invite", "academy-promo"],
+  "internal-link": ["homepage-banner", "academy-crosslink", "blog-cta"],
+  "product-message": ["feature-promo", "chatbot-nudge"],
+  "organic": ["n/a"],
+  "referral": ["n/a"]
+};
 
 // Campaign dropdown options
 const campaignOptions = [
@@ -119,46 +73,6 @@ const campaignOptions = [
   { value: "competitor_replacement", label: "Competitor Replacement" },
   { value: "brand", label: "Brand" },
 ];
-
-// Map sources to allowed mediums
-const sourceToMedium: Record<string, string[]> = {
-  google: ["cpc", "organic", "display", "video", "referral"],
-  facebook: ["social", "cpc", "display", "video"],
-  instagram: ["social", "cpc", "display", "video"],
-  linkedin: ["social", "cpc", "display"],
-  twitter: ["social", "cpc", "display"],
-  tiktok: ["social", "cpc", "video"],
-  newsletter: ["email"],
-  youtube: ["video", "display", "cpc"],
-  pinterest: ["social", "cpc", "display"],
-  snapchat: ["social", "cpc", "video"],
-  reddit: ["social", "cpc", "display"],
-  quora: ["social", "cpc", "display"],
-  whatsapp: ["social"],
-  slack: ["social"],
-  discord: ["social"],
-  affiliate: ["affiliate", "referral"],
-  partner: ["affiliate", "referral"],
-  referral: ["referral"],
-  display: ["display", "banner", "native"],
-  direct: ["direct"],
-  other: mediumOptions.map(m => m.value),
-};
-
-// Map mediums to allowed content
-const mediumToContent: Record<string, string[]> = {
-  cpc: ["search_ad", "banner_ad", "text_link", "remarketing", "retargeting"],
-  social: ["feed", "story", "carousel", "video_ad", "sponsored_post", "native_ad"],
-  email: ["newsletter_top", "newsletter_bottom", "newsletter_sidebar", "cta_button", "promo_code"],
-  display: ["banner_ad", "display_ad", "native_ad", "video_ad", "popup", "interstitial"],
-  video: ["video_ad", "carousel", "sponsored_post"],
-  referral: ["lead_form", "feature_box", "product_tile", "text_link"],
-  affiliate: ["banner_ad", "text_link", "promo_code"],
-  banner: ["banner_ad"],
-  native: ["native_ad"],
-  direct: ["cta_button", "promo_code"],
-  other: contentOptions.map(c => c.value),
-};
 
 type UTM = {
   id: string;
@@ -260,10 +174,10 @@ export default function Home() {
   );
 
   // Compute filtered mediums and content based on selection
-  const allowedMediums = fields.source ? (sourceToMedium[fields.source] || []) : mediumOptions.map(m => m.value);
-  const filteredMediumOptions = mediumOptions.filter(m => allowedMediums.includes(m.value));
-  const allowedContent = fields.medium ? (mediumToContent[fields.medium] || []) : contentOptions.map(c => c.value);
-  const filteredContentOptions = contentOptions.filter(c => allowedContent.includes(c.value));
+  const filteredMediumOptions = mediumOptions.filter(m =>
+    fields.source && mediumToSources[m.value]?.includes(fields.source)
+  );
+  const filteredContentOptions = fields.medium ? (contentByMedium[fields.medium] || []) : [];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
@@ -301,7 +215,7 @@ export default function Home() {
               >
                 <option value="" disabled>Select source</option>
                 {sourceOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
             </div>
@@ -334,6 +248,7 @@ export default function Home() {
                 required
                 value={fields.medium}
                 onChange={handleChange}
+                disabled={!fields.source}
               >
                 <option value="" disabled>Select medium</option>
                 {filteredMediumOptions.map(opt => (
@@ -351,10 +266,11 @@ export default function Home() {
                 name="content"
                 value={fields.content}
                 onChange={handleChange}
+                disabled={!fields.medium}
               >
                 <option value="" disabled>Select content</option>
                 {filteredContentOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
             </div>
