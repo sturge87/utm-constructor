@@ -125,6 +125,8 @@ export default function Home() {
   const [savedUtms, setSavedUtms] = useState<UTM[]>([]);
   const [loadingUtms, setLoadingUtms] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [filterCampaign, setFilterCampaign] = useState<string>("all");
+  const [filterSource, setFilterSource] = useState<string>("all");
 
   useEffect(() => {
     if (fields.url) {
@@ -195,6 +197,16 @@ export default function Home() {
     setCopiedId(utm.id);
     setTimeout(() => setCopiedId(null), 1500);
   };
+
+  // Compute unique campaigns and sources from savedUtms for filter dropdowns
+  const uniqueCampaigns = Array.from(new Set(savedUtms.map(u => u.utm_campaign))).filter(Boolean);
+  const uniqueSources = Array.from(new Set(savedUtms.map(u => u.utm_source))).filter(Boolean);
+
+  // Filtered UTMs
+  const filteredUtms = savedUtms.filter(utm =>
+    (filterCampaign === "all" || utm.utm_campaign === filterCampaign) &&
+    (filterSource === "all" || utm.utm_source === filterSource)
+  );
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
@@ -312,13 +324,36 @@ export default function Home() {
       )}
       <div className="w-full max-w-md mt-6">
         <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
+        {/* Filters */}
+        <div className="flex gap-2 mb-2">
+          <select
+            className="border rounded px-2 py-1 text-xs"
+            value={filterCampaign}
+            onChange={e => setFilterCampaign(e.target.value)}
+          >
+            <option value="all">All Campaigns</option>
+            {uniqueCampaigns.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <select
+            className="border rounded px-2 py-1 text-xs"
+            value={filterSource}
+            onChange={e => setFilterSource(e.target.value)}
+          >
+            <option value="all">All Sources</option>
+            {uniqueSources.map(s => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
         {loadingUtms ? (
           <div className="text-gray-500">Loading...</div>
-        ) : savedUtms.length === 0 ? (
+        ) : filteredUtms.length === 0 ? (
           <div className="text-gray-500">No UTMs found for this URL.</div>
         ) : (
           <ul className="space-y-2">
-            {savedUtms.map((utm) => {
+            {filteredUtms.map((utm) => {
               const url = buildUtmUrl({
                 url: fields.url,
                 source: utm.utm_source,
