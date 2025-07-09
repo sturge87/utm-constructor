@@ -211,182 +211,190 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <h1 className="text-3xl font-bold mb-6">UTM URL Generator</h1>
-      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md space-y-4" onSubmit={handleGenerate}>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="url">
-            Website URL <span className="text-red-500">*</span>
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="url"
-            name="url"
-            type="url"
-            required
-            value={fields.url}
-            onChange={handleChange}
-            placeholder="https://yourwebsite.com/page"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="source">
-            Campaign Source (utm_source) <span className="text-red-500">*</span>
-          </label>
-          <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="source"
-            name="source"
-            required
-            value={fields.source}
-            onChange={handleChange}
-          >
-            <option value="" disabled>Select source</option>
-            {sourceOptions.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medium">
-            Campaign Medium (utm_medium) <span className="text-red-500">*</span>
-          </label>
-          <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="medium"
-            name="medium"
-            required
-            value={fields.medium}
-            onChange={handleChange}
-          >
-            <option value="" disabled>Select medium</option>
-            {mediumOptions.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="campaign">
-            Campaign Name (utm_campaign) <span className="text-red-500">*</span>
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="campaign"
-            name="campaign"
-            type="text"
-            required
-            value={fields.campaign}
-            onChange={handleChange}
-            placeholder="e.g. spring_sale"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
-            Campaign Content (utm_content)
-          </label>
-          <select
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="content"
-            name="content"
-            value={fields.content}
-            onChange={handleChange}
-          >
-            <option value="" disabled>Select content</option>
-            {contentOptions.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
-        >
-          Generate UTM
-        </button>
-      </form>
-      {generatedUrl && (
-        <div className="w-full max-w-md bg-white shadow rounded p-4 flex flex-col items-start mt-2">
-          <span className="text-gray-700 text-sm font-semibold mb-2">Generated UTM URL:</span>
-          <div className="flex flex-col sm:flex-row w-full gap-2 items-stretch">
-            <input
-              className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
-              value={generatedUrl}
-              readOnly
-              onFocus={e => e.target.select()}
-            />
+      <div className="w-full max-w-5xl flex flex-col gap-8 md:flex-row md:items-start md:gap-12">
+        {/* Generator Form */}
+        <div className="flex-1">
+          <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md space-y-4" onSubmit={handleGenerate}>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="url">
+                Website URL <span className="text-red-500">*</span>
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="url"
+                name="url"
+                type="url"
+                required
+                value={fields.url}
+                onChange={handleChange}
+                placeholder="https://yourwebsite.com/page"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="source">
+                Campaign Source (utm_source) <span className="text-red-500">*</span>
+              </label>
+              <select
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="source"
+                name="source"
+                required
+                value={fields.source}
+                onChange={handleChange}
+              >
+                <option value="" disabled>Select source</option>
+                {sourceOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medium">
+                Campaign Medium (utm_medium) <span className="text-red-500">*</span>
+              </label>
+              <select
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="medium"
+                name="medium"
+                required
+                value={fields.medium}
+                onChange={handleChange}
+              >
+                <option value="" disabled>Select medium</option>
+                {mediumOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="campaign">
+                Campaign Name (utm_campaign) <span className="text-red-500">*</span>
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="campaign"
+                name="campaign"
+                type="text"
+                required
+                value={fields.campaign}
+                onChange={handleChange}
+                placeholder="e.g. spring_sale"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
+                Campaign Content (utm_content)
+              </label>
+              <select
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="content"
+                name="content"
+                value={fields.content}
+                onChange={handleChange}
+              >
+                <option value="" disabled>Select content</option>
+                {contentOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
             <button
-              className={`px-3 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
-              onClick={handleCopy}
-              type="button"
+              type="submit"
+              className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
             >
-              {copied ? "Copied!" : "Copy"}
+              Generate UTM
             </button>
+          </form>
+          {generatedUrl && (
+            <div className="w-full max-w-md bg-white shadow rounded p-4 flex flex-col items-start mt-2">
+              <span className="text-gray-700 text-sm font-semibold mb-2">Generated UTM URL:</span>
+              <div className="flex flex-col sm:flex-row w-full gap-2 items-stretch">
+                <input
+                  className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
+                  value={generatedUrl}
+                  readOnly
+                  onFocus={e => e.target.select()}
+                />
+                <button
+                  className={`px-3 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                  onClick={handleCopy}
+                  type="button"
+                >
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Saved UTMs */}
+        <div className="flex-1">
+          <div className="w-full max-w-md mt-0 md:mt-6">
+            <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
+            {/* Filters: only show if there are saved UTMs */}
+            {savedUtms.length > 0 && (
+              <div className="flex gap-2 mb-2">
+                <select
+                  className="border rounded px-2 py-1 text-xs"
+                  value={filterCampaign}
+                  onChange={e => setFilterCampaign(e.target.value)}
+                >
+                  <option value="all">All Campaigns</option>
+                  {uniqueCampaigns.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <select
+                  className="border rounded px-2 py-1 text-xs"
+                  value={filterSource}
+                  onChange={e => setFilterSource(e.target.value)}
+                >
+                  <option value="all">All Sources</option>
+                  {uniqueSources.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {loadingUtms ? (
+              <div className="text-gray-500">Loading...</div>
+            ) : filteredUtms.length === 0 ? (
+              <div className="text-gray-500">No UTMs found for this URL.</div>
+            ) : (
+              <ul className="space-y-2">
+                {filteredUtms.map((utm) => {
+                  const url = buildUtmUrl({
+                    url: fields.url,
+                    source: utm.utm_source,
+                    medium: utm.utm_medium,
+                    campaign: utm.utm_campaign,
+                    content: utm.utm_content || "",
+                  });
+                  return (
+                    <li key={utm.id} className="bg-white border rounded p-2 text-xs flex flex-col gap-1">
+                      <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
+                      <span className="text-gray-400">{new Date(utm.created_at).toLocaleString()}</span>
+                      <div className="flex gap-2 items-center mt-1">
+                        <input
+                          className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
+                          value={url}
+                          readOnly
+                          onFocus={e => e.target.select()}
+                        />
+                        <button
+                          className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                          onClick={() => handleCopySaved(utm)}
+                          type="button"
+                        >
+                          {copiedId === utm.id ? "Copied!" : "Copy"}
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
         </div>
-      )}
-      <div className="w-full max-w-md mt-6">
-        <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
-        {/* Filters: only show if there are saved UTMs */}
-        {savedUtms.length > 0 && (
-          <div className="flex gap-2 mb-2">
-            <select
-              className="border rounded px-2 py-1 text-xs"
-              value={filterCampaign}
-              onChange={e => setFilterCampaign(e.target.value)}
-            >
-              <option value="all">All Campaigns</option>
-              {uniqueCampaigns.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <select
-              className="border rounded px-2 py-1 text-xs"
-              value={filterSource}
-              onChange={e => setFilterSource(e.target.value)}
-            >
-              <option value="all">All Sources</option>
-              {uniqueSources.map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-        )}
-        {loadingUtms ? (
-          <div className="text-gray-500">Loading...</div>
-        ) : filteredUtms.length === 0 ? (
-          <div className="text-gray-500">No UTMs found for this URL.</div>
-        ) : (
-          <ul className="space-y-2">
-            {filteredUtms.map((utm) => {
-              const url = buildUtmUrl({
-                url: fields.url,
-                source: utm.utm_source,
-                medium: utm.utm_medium,
-                campaign: utm.utm_campaign,
-                content: utm.utm_content || "",
-              });
-              return (
-                <li key={utm.id} className="bg-white border rounded p-2 text-xs flex flex-col gap-1">
-                  <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
-                  <span className="text-gray-400">{new Date(utm.created_at).toLocaleString()}</span>
-                  <div className="flex gap-2 items-center mt-1">
-                    <input
-                      className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
-                      value={url}
-                      readOnly
-                      onFocus={e => e.target.select()}
-                    />
-                    <button
-                      className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                      onClick={() => handleCopySaved(utm)}
-                      type="button"
-                    >
-                      {copiedId === utm.id ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
       </div>
     </div>
   );
