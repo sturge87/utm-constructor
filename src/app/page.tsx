@@ -324,29 +324,31 @@ export default function Home() {
       )}
       <div className="w-full max-w-md mt-6">
         <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
-        {/* Filters */}
-        <div className="flex gap-2 mb-2">
-          <select
-            className="border rounded px-2 py-1 text-xs"
-            value={filterCampaign}
-            onChange={e => setFilterCampaign(e.target.value)}
-          >
-            <option value="all">All Campaigns</option>
-            {uniqueCampaigns.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-          <select
-            className="border rounded px-2 py-1 text-xs"
-            value={filterSource}
-            onChange={e => setFilterSource(e.target.value)}
-          >
-            <option value="all">All Sources</option>
-            {uniqueSources.map(s => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-        </div>
+        {/* Filters: only show if there are saved UTMs */}
+        {savedUtms.length > 0 && (
+          <div className="flex gap-2 mb-2">
+            <select
+              className="border rounded px-2 py-1 text-xs"
+              value={filterCampaign}
+              onChange={e => setFilterCampaign(e.target.value)}
+            >
+              <option value="all">All Campaigns</option>
+              {uniqueCampaigns.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <select
+              className="border rounded px-2 py-1 text-xs"
+              value={filterSource}
+              onChange={e => setFilterSource(e.target.value)}
+            >
+              <option value="all">All Sources</option>
+              {uniqueSources.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+        )}
         {loadingUtms ? (
           <div className="text-gray-500">Loading...</div>
         ) : filteredUtms.length === 0 ? (
