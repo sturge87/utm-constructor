@@ -297,7 +297,7 @@ export default function Home() {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
+          className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
         >
           Generate UTM
         </button>
@@ -313,7 +313,7 @@ export default function Home() {
               onFocus={e => e.target.select()}
             />
             <button
-              className={`px-3 py-1 rounded bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+              className={`px-3 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
               onClick={handleCopy}
               type="button"
             >
@@ -373,7 +373,7 @@ export default function Home() {
                       onFocus={e => e.target.select()}
                     />
                     <button
-                      className={`px-2 py-1 rounded bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                      className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
                       onClick={() => handleCopySaved(utm)}
                       type="button"
                     >
