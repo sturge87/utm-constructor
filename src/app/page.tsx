@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function buildUtmUrl(fields: typeof initialFields) {
   if (!fields.url || !fields.source || !fields.medium || !fields.campaign) return "";
@@ -108,6 +113,25 @@ export default function Home() {
   const [fields, setFields] = useState(initialFields);
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [savedUtms, setSavedUtms] = useState<any[]>([]);
+  const [loadingUtms, setLoadingUtms] = useState(false);
+
+  useEffect(() => {
+    if (fields.url) {
+      setLoadingUtms(true);
+      supabase
+        .from("utms")
+        .select("id, utm_source, utm_medium, utm_campaign, utm_content, created_at")
+        .eq("website_url", fields.url)
+        .order("created_at", { ascending: false })
+        .then(({ data }) => {
+          setSavedUtms(data || []);
+          setLoadingUtms(false);
+        });
+    } else {
+      setSavedUtms([]);
+    }
+  }, [fields.url]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFields({ ...fields, [e.target.name]: e.target.value });
@@ -115,11 +139,30 @@ export default function Home() {
     setCopied(false);
   };
 
-  const handleGenerate = (e: React.FormEvent) => {
+  const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     const url = buildUtmUrl(fields);
     setGeneratedUrl(url);
     setCopied(false);
+    // Save to Supabase
+    if (url) {
+      await supabase.from("utms").insert([
+        {
+          website_url: fields.url,
+          utm_source: fields.source,
+          utm_medium: fields.medium,
+          utm_campaign: fields.campaign,
+          utm_content: fields.content || null,
+        },
+      ]);
+      // Refresh saved UTMs
+      const { data } = await supabase
+        .from("utms")
+        .select("id, utm_source, utm_medium, utm_campaign, utm_content, created_at")
+        .eq("website_url", fields.url)
+        .order("created_at", { ascending: false });
+      setSavedUtms(data || []);
+    }
   };
 
   const handleCopy = async () => {
@@ -244,6 +287,23 @@ export default function Home() {
           </div>
         </div>
       )}
+      <div className="w-full max-w-md mt-6">
+        <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
+        {loadingUtms ? (
+          <div className="text-gray-500">Loading...</div>
+        ) : savedUtms.length === 0 ? (
+          <div className="text-gray-500">No UTMs found for this URL.</div>
+        ) : (
+          <ul className="space-y-2">
+            {savedUtms.map((utm) => (
+              <li key={utm.id} className="bg-white border rounded p-2 text-xs flex flex-col">
+                <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
+                <span className="text-gray-400">{new Date(utm.created_at).toLocaleString()}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
