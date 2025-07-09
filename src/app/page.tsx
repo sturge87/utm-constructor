@@ -328,7 +328,7 @@ export default function Home() {
         </div>
         {/* Saved UTMs */}
         <div className="flex-1">
-          <div className="w-full max-w-md mt-0 md:mt-6">
+          <div className="w-full max-w-md mt-0 md:mt-6 bg-white rounded shadow px-6 py-6">
             <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
             {/* Filters: only show if there are saved UTMs */}
             {savedUtms.length > 0 && (
