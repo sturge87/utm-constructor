@@ -53,21 +53,23 @@ const sourceOptions = [
   "quora"
 ];
 
-// UTM medium options by source (all sources have the same mediums)
-const newMediums = [
-  "cpc",
-  "paid_social",
-  "social",
-  "email",
-  "referral",
-  "display",
-  "influencer",
-  "retargeting",
-  "syndication"
-];
-const mediumBySource: Record<string, string[]> = Object.fromEntries(
-  sourceOptions.map(source => [source, newMediums])
-);
+// Renewed UTM medium options by source
+const mediumBySource: Record<string, string[]> = {
+  google:     ["cpc", "display", "retargeting", "paid_social", "referral", "syndication"],
+  bing:       ["cpc", "display", "retargeting", "referral"],
+  linkedin:   ["paid_social", "social", "referral", "influencer", "retargeting"],
+  facebook:   ["paid_social", "social", "referral", "influencer", "retargeting"],
+  twitter:    ["paid_social", "social", "referral", "influencer", "retargeting"],
+  newsletter: ["email", "referral", "syndication"],
+  mailchimp:  ["email", "referral", "syndication"],
+  hubspot:    ["email", "referral", "syndication"],
+  g2:         ["referral", "display", "syndication"],
+  gartner:    ["referral", "display", "syndication"],
+  reddit:     ["social", "referral", "retargeting"],
+  quora:      ["social", "referral", "retargeting"],
+};
+// All unique mediums for bulk UI
+const allMediums = Array.from(new Set(Object.values(mediumBySource).flat()));
 
 // Campaign dropdown options
 const campaignOptions = [
@@ -111,26 +113,38 @@ export default function Home() {
   const toggleBulkSource = (src: string) => setBulkSources(s => s.includes(src) ? s.filter(x => x !== src) : [...s, src]);
   const toggleBulkMedium = (med: string) => setBulkMediums(m => m.includes(med) ? m.filter(x => x !== med) : [...m, med]);
 
-  // Generate all UTM combinations for bulk
-  const handleBulkGenerate = (e: React.FormEvent) => {
+  // Generate all UTM combinations for bulk and save to Supabase
+  const handleBulkGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     const urls = bulkUrls.split(/\r?\n/).map(u => u.trim()).filter(Boolean);
     if (!urls.length || !bulkCampaign || !bulkSources.length || !bulkMediums.length) return;
     const combos: string[][] = [];
+    const inserts: any[] = [];
     urls.forEach(url => {
       bulkSources.forEach(source => {
         bulkMediums.forEach(medium => {
+          const utm = buildUtmUrl({ url, source, medium, campaign: bulkCampaign, content: '' });
           combos.push([
             url,
             source,
             medium,
             bulkCampaign,
-            buildUtmUrl({ url, source, medium, campaign: bulkCampaign, content: '' })
+            utm
           ]);
+          inserts.push({
+            website_url: url,
+            utm_source: source,
+            utm_medium: medium,
+            utm_campaign: bulkCampaign,
+            utm_content: null,
+          });
         });
       });
     });
     setBulkResults(combos);
+    if (inserts.length) {
+      await supabase.from("utms").insert(inserts);
+    }
   };
 
   // Custom URL validation (allow protocol-less domains)
@@ -232,8 +246,12 @@ export default function Home() {
     (filterSource === "all" || utm.utm_source === filterSource)
   );
 
-  // Compute filtered mediums based on selection
+  // Compute filtered mediums based on selection (single)
   const filteredMediumOptions = fields.source ? (mediumBySource[fields.source] || []) : [];
+  // Compute filtered mediums for bulk: only show mediums valid for at least one selected source
+  const filteredBulkMediums = bulkSources.length
+    ? Array.from(new Set(bulkSources.flatMap(src => mediumBySource[src] || [])))
+    : allMediums;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
@@ -450,7 +468,7 @@ export default function Home() {
                 <div>
                   <div className="text-[#b5bac1] text-xs font-bold mb-1">Mediums</div>
                   <div className="flex flex-wrap gap-2">
-                    {newMediums.map(med => (
+                    {filteredBulkMediums.map(med => (
                       <label key={med} className="flex items-center gap-1 cursor-pointer">
                         <input
                           type="checkbox"
