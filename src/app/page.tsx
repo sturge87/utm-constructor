@@ -91,6 +91,14 @@ type UTM = {
   created_at: string;
 };
 
+type UTMInsert = {
+  website_url: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_content: string | null;
+};
+
 export default function Home() {
   const [fields, setFields] = useState(initialFields);
   const [generatedUrl, setGeneratedUrl] = useState("");
@@ -119,7 +127,7 @@ export default function Home() {
     const urls = bulkUrls.split(/\r?\n/).map(u => u.trim()).filter(Boolean);
     if (!urls.length || !bulkCampaign || !bulkSources.length || !bulkMediums.length) return;
     const combos: string[][] = [];
-    const inserts: any[] = [];
+    const inserts: UTMInsert[] = [];
     urls.forEach(url => {
       bulkSources.forEach(source => {
         bulkMediums.forEach(medium => {
