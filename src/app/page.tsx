@@ -300,69 +300,33 @@ export default function Home() {
             {/* Live UTM Preview (hidden on mobile) */}
             <div className="w-full mb-2 hidden sm:block">
               <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
-              <div className="flex flex-row flex-wrap items-center gap-x-2 gap-y-1 bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]">
+              <div className="flex flex-row flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]" style={{ gap: '15px' }}>
                 <motion.span
                   key={fields.url || 'empty-url'}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: fields.url ? 1.1 : 1, opacity: fields.url ? 1 : 0.5 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: fields.url ? 1 : 0.95, opacity: fields.url ? 1 : 0.5 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
                   className="inline-block"
                 >
                   {fields.url || 'yourwebsite.com/page'}
                 </motion.span>
                 <AnimatePresence>
-                  {fields.source && (
-                    <motion.span
-                      key={fields.source}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1.1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      className="inline-block"
-                      style={{ color: '#19d89f' }}
-                    >
-                      ?utm_source={fields.source}
-                    </motion.span>
-                  )}
-                  {fields.medium && (
-                    <motion.span
-                      key={fields.medium}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1.1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      className="inline-block"
-                      style={{ color: '#19d89f' }}
-                    >
-                      &utm_medium={fields.medium}
-                    </motion.span>
-                  )}
-                  {fields.campaign && (
-                    <motion.span
-                      key={fields.campaign}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1.1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      className="inline-block"
-                      style={{ color: '#19d89f' }}
-                    >
-                      &utm_campaign={fields.campaign}
-                    </motion.span>
-                  )}
-                  {fields.content && (
-                    <motion.span
-                      key={fields.content}
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1.1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      className="inline-block"
-                      style={{ color: '#19d89f' }}
-                    >
-                      &utm_content={fields.content}
-                    </motion.span>
-                  )}
+                  {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
+                    const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
+                    return (
+                      <motion.span
+                        key={val as string}
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.07 }}
+                        className="inline-block"
+                        style={{ color: '#19d89f' }}
+                      >
+                        {paramNames[idx]}{val}
+                      </motion.span>
+                    );
+                  })}
                 </AnimatePresence>
               </div>
             </div>
