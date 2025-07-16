@@ -175,18 +175,18 @@ export default function Home() {
   const filteredMediumOptions = fields.source ? (mediumBySource[fields.source] || []) : [];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      <h1 className="text-3xl font-bold mb-6">UTM URL Generator</h1>
-      <div className="w-full max-w-5xl flex flex-col gap-8 md:flex-row md:items-start md:gap-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
+      <h1 className="text-3xl font-bold mb-6 text-[#f2f3f5]">UTM URL Generator</h1>
+      <div className="w-full max-w-5xl flex flex-col gap-8">
         {/* Generator Form */}
         <div className="flex-1">
-          <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md space-y-4" onSubmit={handleGenerate}>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="url">
-                Website URL <span className="text-red-500">*</span>
+          <form className="bg-[#23272a] shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-5xl flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
+            <div className="flex flex-col w-48">
+              <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">
+                Website URL <span className="text-red-400">*</span>
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                 id="url"
                 name="url"
                 type="url"
@@ -196,12 +196,12 @@ export default function Home() {
                 placeholder="https://yourwebsite.com/page"
               />
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="source">
-                Campaign Source (utm_source) <span className="text-red-500">*</span>
+            <div className="flex flex-col w-40">
+              <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="source">
+                Source <span className="text-red-400">*</span>
               </label>
               <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                 id="source"
                 name="source"
                 required
@@ -214,12 +214,12 @@ export default function Home() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="campaign">
-                Campaign Name (utm_campaign) <span className="text-red-500">*</span>
+            <div className="flex flex-col w-48">
+              <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
+                Campaign <span className="text-red-400">*</span>
               </label>
               <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                 id="campaign"
                 name="campaign"
                 required
@@ -232,12 +232,12 @@ export default function Home() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medium">
-                Campaign Medium (utm_medium) <span className="text-red-500">*</span>
+            <div className="flex flex-col w-40">
+              <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
+                Medium <span className="text-red-400">*</span>
               </label>
               <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                 id="medium"
                 name="medium"
                 required
@@ -251,12 +251,12 @@ export default function Home() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
-                Campaign Content (utm_content)
+            <div className="flex flex-col w-48">
+              <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
+                Content
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                 id="content"
                 name="content"
                 type="text"
@@ -265,9 +265,20 @@ export default function Home() {
                 placeholder="Optional content value"
               />
             </div>
+            {/* Live UTM Preview */}
+            <div className="w-full mb-2">
+              <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
+              <div className="flex flex-wrap items-center gap-2 bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]">
+                <span className="transition-transform duration-200 ease-out inline-block" style={{transform: fields.url ? 'scale(1.1)' : 'scale(1)', opacity: fields.url ? 1 : 0.5}}>{fields.url || 'yourwebsite.com/page'}</span>
+                {fields.source && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}> ?utm_source={fields.source}</span>}
+                {fields.medium && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_medium={fields.medium}</span>}
+                {fields.campaign && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_campaign={fields.campaign}</span>}
+                {fields.content && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_content={fields.content}</span>}
+              </div>
+            </div>
             <button
               type="submit"
-              className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
+              className="h-10 px-6 bg-[#5865f2] hover:bg-[#4752c4] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
             >
               Generate UTM
             </button>
