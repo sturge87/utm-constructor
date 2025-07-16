@@ -74,18 +74,18 @@ export default function AllUtmsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50 p-4">
-      <h1 className="text-2xl font-bold mb-6">All Saved UTMs</h1>
-      <div className="w-full max-w-6xl bg-white rounded shadow p-6 mb-8">
+    <div className="min-h-screen flex flex-col items-center bg-[#313338] p-4 text-[#f2f3f5]">
+      <h1 className="text-2xl font-bold mb-6 text-[#f2f3f5]">All Saved UTMs</h1>
+      <div className="w-full max-w-6xl bg-[#23272a] rounded shadow p-6 mb-8">
         <div className="flex flex-wrap gap-4 mb-4">
           <input
-            className="border rounded px-2 py-1 text-xs w-48"
+            className="border border-[#42454a] rounded px-2 py-1 text-xs w-48 bg-[#383a40] text-[#f2f3f5]"
             placeholder="Website URL"
             value={filters.website_url}
             onChange={e => setFilters(f => ({ ...f, website_url: e.target.value }))}
           />
           <select
-            className="border rounded px-2 py-1 text-xs w-40"
+            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
             value={filters.utm_source}
             onChange={e => setFilters(f => ({ ...f, utm_source: e.target.value }))}
           >
@@ -93,7 +93,7 @@ export default function AllUtmsPage() {
             {sources.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <select
-            className="border rounded px-2 py-1 text-xs w-40"
+            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
             value={filters.utm_medium}
             onChange={e => setFilters(f => ({ ...f, utm_medium: e.target.value }))}
           >
@@ -101,7 +101,7 @@ export default function AllUtmsPage() {
             {mediums.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
           <select
-            className="border rounded px-2 py-1 text-xs w-40"
+            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
             value={filters.utm_campaign}
             onChange={e => setFilters(f => ({ ...f, utm_campaign: e.target.value }))}
           >
@@ -109,7 +109,7 @@ export default function AllUtmsPage() {
             {campaigns.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select
-            className="border rounded px-2 py-1 text-xs w-40"
+            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
             value={filters.utm_content}
             onChange={e => setFilters(f => ({ ...f, utm_content: e.target.value }))}
           >
@@ -118,33 +118,33 @@ export default function AllUtmsPage() {
           </select>
         </div>
         {loading ? (
-          <div className="text-gray-500">Loading...</div>
+          <div className="text-[#b5bac1]">Loading...</div>
         ) : filteredUtms.length === 0 ? (
-          <div className="text-gray-500">No UTMs found.</div>
+          <div className="text-[#b5bac1]">No UTMs found.</div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#19d89f] text-white">
-                  <TableHead className="p-2 border">Website URL</TableHead>
-                  <TableHead className="p-2 border">Source</TableHead>
-                  <TableHead className="p-2 border">Medium</TableHead>
-                  <TableHead className="p-2 border">Campaign</TableHead>
-                  <TableHead className="p-2 border">Content</TableHead>
-                  <TableHead className="p-2 border">Created</TableHead>
-                  <TableHead className="p-2 border">Copy</TableHead>
+                <TableRow className="bg-[#383a40] text-[#19d89f]">
+                  <TableHead className="p-2 border border-[#42454a]">Website URL</TableHead>
+                  <TableHead className="p-2 border border-[#42454a]">Source</TableHead>
+                  <TableHead className="p-2 border border-[#42454a]">Medium</TableHead>
+                  <TableHead className="p-2 border border-[#42454a]">Campaign</TableHead>
+                  <TableHead className="p-2 border border-[#42454a]">Content</TableHead>
+                  <TableHead className="p-2 border border-[#42454a]">Created</TableHead>
+                  <TableHead className="p-2 border border-[#42454a]">Copy</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredUtms.map(utm => (
-                  <TableRow key={utm.id} className="even:bg-gray-50">
-                    <TableCell className="p-2 border break-all">{utm.website_url}</TableCell>
-                    <TableCell className="p-2 border">{utm.utm_source}</TableCell>
-                    <TableCell className="p-2 border">{utm.utm_medium}</TableCell>
-                    <TableCell className="p-2 border">{utm.utm_campaign}</TableCell>
-                    <TableCell className="p-2 border">{utm.utm_content}</TableCell>
-                    <TableCell className="p-2 border text-gray-400">{new Date(utm.created_at).toLocaleString()}</TableCell>
-                    <TableCell className="p-2 border">
+                  <TableRow key={utm.id} className="even:bg-[#23272a]">
+                    <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5]">{utm.website_url}</TableCell>
+                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_source}</TableCell>
+                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_medium}</TableCell>
+                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_campaign}</TableCell>
+                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_content}</TableCell>
+                    <TableCell className="p-2 border border-[#42454a] text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</TableCell>
+                    <TableCell className="p-2 border border-[#42454a]">
                       <button
                         className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
                         onClick={() => handleCopy(utm)}
