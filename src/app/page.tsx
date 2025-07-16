@@ -10,15 +10,22 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 function buildUtmUrl(fields: typeof initialFields) {
   if (!fields.url || !fields.source || !fields.medium || !fields.campaign) return "";
   let urlStr = fields.url.trim();
+  // Ensure protocol
   if (!/^https?:\/\//i.test(urlStr)) {
     urlStr = "https://" + urlStr;
   }
-  const url = new URL(urlStr);
-  url.searchParams.set("utm_source", fields.source);
-  url.searchParams.set("utm_medium", fields.medium);
-  url.searchParams.set("utm_campaign", fields.campaign);
-  if (fields.content) url.searchParams.set("utm_content", fields.content);
-  return url.toString();
+  // Remove any trailing ? or #
+  urlStr = urlStr.replace(/[?#]+$/, "");
+  // Ensure trailing slash before query params
+  let urlObj = new URL(urlStr);
+  if (!urlObj.pathname.endsWith("/")) {
+    urlObj.pathname += "/";
+  }
+  urlObj.searchParams.set("utm_source", fields.source);
+  urlObj.searchParams.set("utm_medium", fields.medium);
+  urlObj.searchParams.set("utm_campaign", fields.campaign);
+  if (fields.content) urlObj.searchParams.set("utm_content", fields.content);
+  return urlObj.toString();
 }
 
 const initialFields = {
@@ -265,15 +272,15 @@ export default function Home() {
                 placeholder="Optional content value"
               />
             </div>
-            {/* Live UTM Preview */}
-            <div className="w-full mb-2">
+            {/* Live UTM Preview (hidden on mobile) */}
+            <div className="w-full mb-2 hidden sm:block">
               <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
-              <div className="flex flex-wrap items-center gap-2 bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]">
-                <span className="transition-transform duration-200 ease-out inline-block" style={{transform: fields.url ? 'scale(1.1)' : 'scale(1)', opacity: fields.url ? 1 : 0.5}}>{fields.url || 'yourwebsite.com/page'}</span>
-                {fields.source && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}> ?utm_source={fields.source}</span>}
-                {fields.medium && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_medium={fields.medium}</span>}
-                {fields.campaign && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_campaign={fields.campaign}</span>}
-                {fields.content && <span className="transition-transform duration-200 ease-out inline-block" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_content={fields.content}</span>}
+              <div className="flex flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]">
+                <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: fields.url ? 'scale(1.1)' : 'scale(1)', opacity: fields.url ? 1 : 0.5}}>{fields.url || 'yourwebsite.com/page'}</span>
+                {fields.source && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}> ?utm_source={fields.source}</span>}
+                {fields.medium && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_medium={fields.medium}</span>}
+                {fields.campaign && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_campaign={fields.campaign}</span>}
+                {fields.content && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_content={fields.content}</span>}
               </div>
             </div>
             <button
@@ -306,13 +313,13 @@ export default function Home() {
         </div>
         {/* Saved UTMs */}
         <div className="flex-1">
-          <div className="w-full max-w-md mt-0 md:mt-6 bg-white rounded shadow px-6 py-6">
-            <h2 className="text-lg font-semibold mb-2">Saved UTMs for this URL</h2>
+          <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
+            <h2 className="text-lg font-semibold mb-2 text-[#f2f3f5]">Saved UTMs for this URL</h2>
             {/* Filters: only show if there are saved UTMs */}
             {savedUtms.length > 0 && (
               <div className="flex gap-2 mb-2">
                 <select
-                  className="border rounded px-2 py-1 text-xs"
+                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
                   value={filterCampaign}
                   onChange={e => setFilterCampaign(e.target.value)}
                 >
@@ -322,7 +329,7 @@ export default function Home() {
                   ))}
                 </select>
                 <select
-                  className="border rounded px-2 py-1 text-xs"
+                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
                   value={filterSource}
                   onChange={e => setFilterSource(e.target.value)}
                 >
@@ -334,9 +341,9 @@ export default function Home() {
               </div>
             )}
             {loadingUtms ? (
-              <div className="text-gray-500">Loading...</div>
+              <div className="text-[#b5bac1]">Loading...</div>
             ) : filteredUtms.length === 0 ? (
-              <div className="text-gray-500">No UTMs found for this URL.</div>
+              <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
             ) : (
               <ul className="space-y-2">
                 {filteredUtms.map((utm) => {
@@ -348,12 +355,12 @@ export default function Home() {
                     content: utm.utm_content || "",
                   });
                   return (
-                    <li key={utm.id} className="bg-white border rounded p-2 text-xs flex flex-col gap-1">
+                    <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
                       <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
-                      <span className="text-gray-400">{new Date(utm.created_at).toLocaleString()}</span>
+                      <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
                       <div className="flex gap-2 items-center mt-1">
                         <input
-                          className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
+                          className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
                           value={url}
                           readOnly
                           onFocus={e => e.target.select()}
