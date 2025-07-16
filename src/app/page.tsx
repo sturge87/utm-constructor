@@ -31,53 +31,35 @@ const initialFields = {
 
 // UTM source options
 const sourceOptions = [
-  "google", "bing", "linkedin", "meta", "reddit", "youtube", "quora", "g2", "capterra",
-  "newsletter", "community", "academy", "docs", "product", "github", "blog"
+  "google",
+  "bing",
+  "linkedin",
+  "facebook",
+  "twitter",
+  "newsletter",
+  "mailchimp",
+  "hubspot",
+  "g2",
+  "gartner",
+  "reddit",
+  "quora"
 ];
 
-// UTM medium options by source
-const mediumBySource: Record<string, string[]> = {
-  "google": ["cpc", "display", "retargeting", "pmax"],
-  "bing": ["cpc"],
-  "linkedin": ["paid-social", "retargeting", "lead-gen"],
-  "meta": ["paid-social", "retargeting", "display"],
-  "reddit": ["paid-social", "retargeting", "referral"],
-  "youtube": ["video", "retargeting", "referral"],
-  "quora": ["native"],
-  "g2": ["sponsored"],
-  "capterra": ["sponsored"],
-  "newsletter": ["email", "nurture", "product-update"],
-  "community": ["referral", "internal-link", "engagement"],
-  "academy": ["internal-link", "product-message", "onboarding"],
-  "docs": ["internal-link", "product-message", "technical-content"],
-  "product": ["product-message", "in-app-banner"],
-  "github": ["referral", "technical"],
-  "blog": ["internal-link", "thought-leadership", "seo-cta", "referral"]
-};
-
-// UTM content options by medium
-const contentByMedium: Record<string, string[]> = {
-  "cpc": ["search-top", "search-brand", "competitor-keywords", "bottom-funnel", "desktop-download"],
-  "display": ["ai-testing-banner", "automated-testing-banner", "retargeting-static"],
-  "retargeting": ["cart-abandon", "engaged-return", "ebook-download"],
-  "pmax": ["auto-targeting", "branded-intent", "cross-device"],
-  "paid-social": ["testimonial-video", "carousel-top", "offer-promo", "signup-lead"],
-  "video": ["feature-tour", "product-demo", "testing-trends"],
-  "native": ["thought-leadership", "checklist-offer"],
-  "sponsored": ["grid-placement", "featured-slot", "comparison-page"],
-  "email": ["welcome-series", "product-update", "event-invite", "newsletter-feature"],
-  "nurture": ["mid-funnel-content", "value-prop-promo", "case-study"],
-  "product-message": ["modal-feature-promo", "in-app-promo", "chatbot-trigger"],
-  "in-app-banner": ["upgrade-promo", "start-trial-cta"],
-  "internal-link": ["blog-cta", "academy-crosslink", "footer-cta", "sidebar-banner"],
-  "referral": ["community-article", "youtube-video-link", "reddit-thread", "github-readme"],
-  "technical": ["api-guide", "cli-docs", "integration-howto"],
-  "technical-content": ["assertion-library", "data-driven-guide"],
-  "onboarding": ["academy-intro", "tooling-setup", "quickstart"],
-  "seo-cta": ["bottom-blog-banner", "mid-article-card"],
-  "thought-leadership": ["2025-testing-report", "ai-in-testing-whitepaper"],
-  "lead-gen": ["form-fill-ebook", "webinar-registration"]
-};
+// UTM medium options by source (all sources have the same mediums)
+const newMediums = [
+  "cpc",
+  "paid_social",
+  "social",
+  "email",
+  "referral",
+  "display",
+  "influencer",
+  "retargeting",
+  "syndication"
+];
+const mediumBySource: Record<string, string[]> = Object.fromEntries(
+  sourceOptions.map(source => [source, newMediums])
+);
 
 // Campaign dropdown options
 const campaignOptions = [
@@ -189,9 +171,8 @@ export default function Home() {
     (filterSource === "all" || utm.utm_source === filterSource)
   );
 
-  // Compute filtered mediums and content based on selection
+  // Compute filtered mediums based on selection
   const filteredMediumOptions = fields.source ? (mediumBySource[fields.source] || []) : [];
-  const filteredContentOptions = fields.medium ? (contentByMedium[fields.medium] || []) : [];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
@@ -274,19 +255,15 @@ export default function Home() {
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
                 Campaign Content (utm_content)
               </label>
-              <select
+              <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="content"
                 name="content"
+                type="text"
                 value={fields.content}
                 onChange={handleChange}
-                disabled={!fields.medium}
-              >
-                <option value="" disabled>Select content</option>
-                {filteredContentOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
+                placeholder="Optional content value"
+              />
             </div>
             <button
               type="submit"
