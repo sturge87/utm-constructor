@@ -17,7 +17,7 @@ function buildUtmUrl(fields: typeof initialFields) {
   // Remove any trailing ? or #
   urlStr = urlStr.replace(/[?#]+$/, "");
   // Ensure trailing slash before query params
-  let urlObj = new URL(urlStr);
+  const urlObj = new URL(urlStr);
   if (!urlObj.pathname.endsWith("/")) {
     urlObj.pathname += "/";
   }
