@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { motion, AnimatePresence } from "framer-motion";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -97,6 +98,19 @@ export default function Home() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [filterCampaign, setFilterCampaign] = useState<string>("all");
   const [filterSource, setFilterSource] = useState<string>("all");
+  const [urlError, setUrlError] = useState<string>("");
+
+  // Custom URL validation (allow protocol-less domains)
+  function isValidUrlOrDomain(str: string) {
+    if (!str) return false;
+    try {
+      // Try with protocol
+      new URL(/^https?:\/\//i.test(str) ? str : `https://${str}`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   useEffect(() => {
     if (fields.url) {
@@ -119,10 +133,17 @@ export default function Home() {
     setFields({ ...fields, [e.target.name]: e.target.value });
     setGeneratedUrl("");
     setCopied(false);
+    if (e.target.name === "url") {
+      setUrlError("");
+    }
   };
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!fields.url || !isValidUrlOrDomain(fields.url)) {
+      setUrlError("Please enter a valid URL or domain.");
+      return;
+    }
     const url = buildUtmUrl(fields);
     setGeneratedUrl(url);
     setCopied(false);
@@ -196,12 +217,16 @@ export default function Home() {
                 className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                 id="url"
                 name="url"
-                type="url"
-                required
+                type="text"
+                autoComplete="off"
                 value={fields.url}
                 onChange={handleChange}
-                placeholder="https://yourwebsite.com/page"
+                placeholder="yourwebsite.com/page"
+                aria-invalid={!!urlError}
               />
+              {urlError && (
+                <span className="text-red-400 text-xs mt-1">{urlError}</span>
+              )}
             </div>
             <div className="flex flex-col w-40">
               <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="source">
@@ -275,12 +300,70 @@ export default function Home() {
             {/* Live UTM Preview (hidden on mobile) */}
             <div className="w-full mb-2 hidden sm:block">
               <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
-              <div className="flex flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]">
-                <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: fields.url ? 'scale(1.1)' : 'scale(1)', opacity: fields.url ? 1 : 0.5}}>{fields.url || 'yourwebsite.com/page'}</span>
-                {fields.source && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}> ?utm_source={fields.source}</span>}
-                {fields.medium && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_medium={fields.medium}</span>}
-                {fields.campaign && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_campaign={fields.campaign}</span>}
-                {fields.content && <span className="transition-transform duration-200 ease-out inline-block mr-2" style={{transform: 'scale(1.1)', color: '#19d89f'}}>&utm_content={fields.content}</span>}
+              <div className="flex flex-row flex-wrap items-center gap-x-2 gap-y-1 bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]">
+                <motion.span
+                  key={fields.url || 'empty-url'}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: fields.url ? 1.1 : 1, opacity: fields.url ? 1 : 0.5 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="inline-block"
+                >
+                  {fields.url || 'yourwebsite.com/page'}
+                </motion.span>
+                <AnimatePresence>
+                  {fields.source && (
+                    <motion.span
+                      key={fields.source}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1.1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      className="inline-block"
+                      style={{ color: '#19d89f' }}
+                    >
+                      ?utm_source={fields.source}
+                    </motion.span>
+                  )}
+                  {fields.medium && (
+                    <motion.span
+                      key={fields.medium}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1.1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      className="inline-block"
+                      style={{ color: '#19d89f' }}
+                    >
+                      &utm_medium={fields.medium}
+                    </motion.span>
+                  )}
+                  {fields.campaign && (
+                    <motion.span
+                      key={fields.campaign}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1.1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      className="inline-block"
+                      style={{ color: '#19d89f' }}
+                    >
+                      &utm_campaign={fields.campaign}
+                    </motion.span>
+                  )}
+                  {fields.content && (
+                    <motion.span
+                      key={fields.content}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1.1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      className="inline-block"
+                      style={{ color: '#19d89f' }}
+                    >
+                      &utm_content={fields.content}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
             <button
