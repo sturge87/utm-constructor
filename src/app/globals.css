@@ -117,6 +117,28 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    background: #313338;
+    color: #f2f3f5;
+  }
+
+  html {
+    background: #313338;
+    color: #f2f3f5;
+  }
+
+  input, select, textarea, button {
+    background: #383a40;
+    color: #f2f3f5;
+    border-color: #42454a;
+  }
+
+  ::-webkit-input-placeholder { color: #b5bac1; }
+  ::-moz-placeholder { color: #b5bac1; }
+  :-ms-input-placeholder { color: #b5bac1; }
+  ::placeholder { color: #b5bac1; }
+
+  /* Remove default focus outline, use custom ring if needed */
+  :focus {
+    outline: none;
   }
 }
