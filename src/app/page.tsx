@@ -300,22 +300,24 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
       <h1 className="text-3xl font-bold mb-6 text-[#f2f3f5]">UTM URL Generator</h1>
-      {/* Tabs */}
-      <div className="flex mb-6 gap-2">
-        <button
-          className={`px-4 py-2 rounded-t bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
-          onClick={() => setActiveTab('single')}
-        >Single</button>
-        <button
-          className={`px-4 py-2 rounded-t bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'bulk' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
-          onClick={() => setActiveTab('bulk')}
-        >Bulk</button>
-      </div>
-      <div className="w-full max-w-5xl flex flex-col gap-8">
-        {/* Single Tab */}
-        {activeTab === 'single' && (
-          <div className="flex-1">
-            <form className="bg-[#23272a] shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-5xl flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
+      {/* Tabs + Generator Container */}
+      <div className="w-full max-w-3xl mx-auto">
+        <div className="flex w-full">
+          <button
+            className={`flex-1 py-3 rounded-tl-lg rounded-tr-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
+            onClick={() => setActiveTab('single')}
+            style={{ borderRight: '1px solid #23272a' }}
+          >Single</button>
+          <button
+            className={`flex-1 py-3 rounded-tr-lg rounded-tl-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'bulk' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
+            onClick={() => setActiveTab('bulk')}
+            style={{ borderLeft: '1px solid #23272a' }}
+          >Bulk</button>
+        </div>
+        <div className="bg-[#23272a] shadow-md rounded-b-lg px-8 pt-6 pb-8 w-full">
+          {/* Single Tab */}
+          {activeTab === 'single' && (
+            <form className="flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
               <div className="flex flex-col w-48">
                 <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">
                   Website URL <span className="text-red-400">*</span>
@@ -444,224 +446,204 @@ export default function Home() {
                 Generate UTM
               </button>
             </form>
-            {generatedUrl && (
-              <div className="w-full max-w-md bg-white shadow rounded p-4 flex flex-col items-start mt-2">
-                <span className="text-gray-700 text-sm font-semibold mb-2">Generated UTM URL:</span>
-                <div className="flex flex-col sm:flex-row w-full gap-2 items-stretch">
-                  <input
-                    className="flex-1 border rounded px-2 py-1 text-xs text-gray-800 bg-gray-100 cursor-text"
-                    value={generatedUrl}
-                    readOnly
-                    onFocus={e => e.target.select()}
-                  />
-                  <button
-                    className={`px-3 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                    onClick={handleCopy}
-                    type="button"
-                  >
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {/* Bulk Tab */}
-        {activeTab === 'bulk' && (
-          <div className="flex flex-col gap-6 bg-[#23272a] rounded shadow px-8 pt-6 pb-8 w-full max-w-3xl mx-auto">
-            <div className="text-[#b5bac1] text-xs font-bold mb-1" style={{ marginBottom: '4px' }}>Get started with a preset</div>
-            <div className="flex gap-2 mb-2">
-              {bulkPresets.map(preset => {
-                const isActive = selectedPreset === preset.name;
-                return (
-                  <button
-                    key={preset.name}
-                    type="button"
-                    onClick={() => handlePresetClick(preset.name)}
-                    className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
-                    style={{
-                      background: isActive ? 'linear-gradient(90deg, #19d89f 0%, #158f6b 100%)' : 'none',
-                      padding: '2px',
-                      border: isActive ? '2px solid #19d89f' : '1px solid #42454a',
-                      borderRadius: '9999px',
-                      display: 'inline-block',
-                    }}
-                  >
-                    <span
-                      className="block rounded-full px-5 py-2 w-full h-full"
+          )}
+          {/* Bulk Tab */}
+          {activeTab === 'bulk' && (
+            <div className="flex flex-col gap-6 w-full">
+              <div className="text-[#b5bac1] text-xs font-bold mb-1" style={{ marginBottom: '4px' }}>Get started with a preset</div>
+              <div className="flex gap-2 mb-2">
+                {bulkPresets.map(preset => {
+                  const isActive = selectedPreset === preset.name;
+                  return (
+                    <button
+                      key={preset.name}
+                      type="button"
+                      onClick={() => handlePresetClick(preset.name)}
+                      className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
                       style={{
-                        background: isActive ? 'transparent' : '#23272a',
-                        fontWeight: 600,
-                        color: '#f2f3f5',
-                        transition: 'background 0.2s, color 0.2s',
+                        background: isActive ? 'linear-gradient(90deg, #19d89f 0%, #158f6b 100%)' : 'none',
+                        padding: '2px',
+                        border: isActive ? '2px solid #19d89f' : '1px solid #42454a',
+                        borderRadius: '9999px',
+                        display: 'inline-block',
                       }}
                     >
-                      {preset.name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <form onSubmit={handleBulkGenerate} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1">URLs (one per line)</label>
-                <textarea
-                  className="w-full min-h-[80px] max-h-40 border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2 text-xs font-mono"
-                  value={bulkUrls}
-                  onChange={e => setBulkUrls(e.target.value)}
-                  placeholder="enter each URL on a new line"
-                />
-              </div>
-              <div>
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1">Campaign</label>
-                <select
-                  className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
-                  value={bulkCampaign}
-                  onChange={e => setBulkCampaign(e.target.value)}
-                >
-                  <option value="" disabled>Select campaign</option>
-                  {campaignOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-wrap gap-6">
-                <div>
-                  <div className="text-[#b5bac1] text-xs font-bold mb-1">Sources</div>
-                  <div className="flex flex-wrap gap-2">
-                    {sourceOptions.map(src => (
-                      <label key={src} className="flex items-center gap-1 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={bulkSources.includes(src)}
-                          onChange={() => toggleBulkSource(src)}
-                          className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
-                        />
-                        <span className="text-xs">{src}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[#b5bac1] text-xs font-bold mb-1">Mediums</div>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredBulkMediums.map(med => (
-                      <label key={med} className="flex items-center gap-1 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={bulkMediums.includes(med)}
-                          onChange={() => toggleBulkMedium(med)}
-                          className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
-                        />
-                        <span className="text-xs">{med}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
-              >
-                Generate Bulk UTMs
-              </button>
-            </form>
-            {bulkResults.length > 0 && (
-              <div className="overflow-x-auto mt-4">
-                <table className="w-full text-xs bg-[#23272a] border border-[#42454a] rounded">
-                  <thead>
-                    <tr className="bg-[#383a40]">
-                      <th className="p-2 text-left">URL</th>
-                      <th className="p-2 text-left">Source</th>
-                      <th className="p-2 text-left">Medium</th>
-                      <th className="p-2 text-left">Campaign</th>
-                      <th className="p-2 text-left">UTM Link</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bulkResults.map(([url, source, medium, campaign, utm], i) => (
-                      <tr key={i} className="border-t border-[#42454a]">
-                        <td className="p-2 font-mono text-[#b5bac1]">{url}</td>
-                        <td className="p-2">{source}</td>
-                        <td className="p-2">{medium}</td>
-                        <td className="p-2">{campaign}</td>
-                        <td className="p-2 font-mono text-[#19d89f] break-all">{utm}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-        {/* Saved UTMs */}
-        <div className="flex-1">
-          <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
-            <h2 className="text-lg font-semibold mb-2 text-[#f2f3f5]">Saved UTMs for this URL</h2>
-            {/* Filters: only show if there are saved UTMs */}
-            {savedUtms.length > 0 && (
-              <div className="flex gap-2 mb-2">
-                <select
-                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
-                  value={filterCampaign}
-                  onChange={e => setFilterCampaign(e.target.value)}
-                >
-                  <option value="all">All Campaigns</option>
-                  {uniqueCampaigns.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-                <select
-                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
-                  value={filterSource}
-                  onChange={e => setFilterSource(e.target.value)}
-                >
-                  <option value="all">All Sources</option>
-                  {uniqueSources.map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {loadingUtms ? (
-              <div className="text-[#b5bac1]">Loading...</div>
-            ) : filteredUtms.length === 0 ? (
-              <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
-            ) : (
-              <ul className="space-y-2">
-                {filteredUtms.map((utm) => {
-                  const url = buildUtmUrl({
-                    url: fields.url,
-                    source: utm.utm_source,
-                    medium: utm.utm_medium,
-                    campaign: utm.utm_campaign,
-                    content: utm.utm_content || "",
-                  });
-                  return (
-                    <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
-                      <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
-                      <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
-                      <div className="flex gap-2 items-center mt-1">
-                        <input
-                          className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
-                          value={url}
-                          readOnly
-                          onFocus={e => e.target.select()}
-                        />
-                        <button
-                          className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                          onClick={() => handleCopySaved(utm)}
-                          type="button"
-                        >
-                          {copiedId === utm.id ? "Copied!" : "Copy"}
-                        </button>
-                      </div>
-                    </li>
+                      <span
+                        className="block rounded-full px-5 py-2 w-full h-full"
+                        style={{
+                          background: isActive ? 'transparent' : '#23272a',
+                          fontWeight: 600,
+                          color: '#f2f3f5',
+                          transition: 'background 0.2s, color 0.2s',
+                        }}
+                      >
+                        {preset.name}
+                      </span>
+                    </button>
                   );
                 })}
-              </ul>
-            )}
-          </div>
+              </div>
+              <form onSubmit={handleBulkGenerate} className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1">URLs (one per line)</label>
+                  <textarea
+                    className="w-full min-h-[80px] max-h-40 border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2 text-xs font-mono"
+                    value={bulkUrls}
+                    onChange={e => setBulkUrls(e.target.value)}
+                    placeholder="enter each URL on a new line"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1">Campaign</label>
+                  <select
+                    className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
+                    value={bulkCampaign}
+                    onChange={e => setBulkCampaign(e.target.value)}
+                  >
+                    <option value="" disabled>Select campaign</option>
+                    {campaignOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-wrap gap-6">
+                  <div>
+                    <div className="text-[#b5bac1] text-xs font-bold mb-1">Sources</div>
+                    <div className="flex flex-wrap gap-2">
+                      {sourceOptions.map(src => (
+                        <label key={src} className="flex items-center gap-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={bulkSources.includes(src)}
+                            onChange={() => toggleBulkSource(src)}
+                            className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
+                          />
+                          <span className="text-xs">{src}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[#b5bac1] text-xs font-bold mb-1">Mediums</div>
+                    <div className="flex flex-wrap gap-2">
+                      {filteredBulkMediums.map(med => (
+                        <label key={med} className="flex items-center gap-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={bulkMediums.includes(med)}
+                            onChange={() => toggleBulkMedium(med)}
+                            className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
+                          />
+                          <span className="text-xs">{med}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
+                >
+                  Generate Bulk UTMs
+                </button>
+              </form>
+              {bulkResults.length > 0 && (
+                <div className="overflow-x-auto mt-4">
+                  <table className="w-full text-xs bg-[#23272a] border border-[#42454a] rounded">
+                    <thead>
+                      <tr className="bg-[#383a40]">
+                        <th className="p-2 text-left">URL</th>
+                        <th className="p-2 text-left">Source</th>
+                        <th className="p-2 text-left">Medium</th>
+                        <th className="p-2 text-left">Campaign</th>
+                        <th className="p-2 text-left">UTM Link</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bulkResults.map(([url, source, medium, campaign, utm], i) => (
+                        <tr key={i} className="border-t border-[#42454a]">
+                          <td className="p-2 font-mono text-[#b5bac1]">{url}</td>
+                          <td className="p-2">{source}</td>
+                          <td className="p-2">{medium}</td>
+                          <td className="p-2">{campaign}</td>
+                          <td className="p-2 font-mono text-[#19d89f] break-all">{utm}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Saved UTMs */}
+      <div className="flex-1">
+        <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
+          <h2 className="text-lg font-semibold mb-2 text-[#f2f3f5]">Saved UTMs for this URL</h2>
+          {/* Filters: only show if there are saved UTMs */}
+          {savedUtms.length > 0 && (
+            <div className="flex gap-2 mb-2">
+              <select
+                className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
+                value={filterCampaign}
+                onChange={e => setFilterCampaign(e.target.value)}
+              >
+                <option value="all">All Campaigns</option>
+                {uniqueCampaigns.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <select
+                className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
+                value={filterSource}
+                onChange={e => setFilterSource(e.target.value)}
+              >
+                <option value="all">All Sources</option>
+                {uniqueSources.map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {loadingUtms ? (
+            <div className="text-[#b5bac1]">Loading...</div>
+          ) : filteredUtms.length === 0 ? (
+            <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
+          ) : (
+            <ul className="space-y-2">
+              {filteredUtms.map((utm) => {
+                const url = buildUtmUrl({
+                  url: fields.url,
+                  source: utm.utm_source,
+                  medium: utm.utm_medium,
+                  campaign: utm.utm_campaign,
+                  content: utm.utm_content || "",
+                });
+                return (
+                  <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
+                    <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
+                    <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
+                    <div className="flex gap-2 items-center mt-1">
+                      <input
+                        className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
+                        value={url}
+                        readOnly
+                        onFocus={e => e.target.select()}
+                      />
+                      <button
+                        className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                        onClick={() => handleCopySaved(utm)}
+                        type="button"
+                      >
+                        {copiedId === utm.id ? "Copied!" : "Copy"}
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
       <JoeAvatar />
