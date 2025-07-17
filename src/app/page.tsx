@@ -471,28 +471,39 @@ export default function Home() {
           <div className="flex flex-col gap-6 bg-[#23272a] rounded shadow px-8 pt-6 pb-8 w-full max-w-3xl mx-auto">
             <div className="text-[#b5bac1] text-xs font-bold mb-1" style={{ marginBottom: '4px' }}>Get started with a preset</div>
             <div className="flex gap-2 mb-2">
-              {bulkPresets.map(preset => (
-                <button
-                  key={preset.name}
-                  type="button"
-                  onClick={() => handlePresetClick(preset.name)}
-                  className={`relative font-semibold text-sm transition focus:outline-none px-0 py-0 rounded-full ${selectedPreset === preset.name ? 'text-[#19d89f]' : 'text-[#f2f3f5]'}`}
-                  style={{
-                    background: 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)',
-                    padding: '2px',
-                  }}
-                >
-                  <span
-                    className="block rounded-full px-5 py-2"
+              {bulkPresets.map(preset => {
+                const isActive = selectedPreset === preset.name;
+                return (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => handlePresetClick(preset.name)}
+                    className={`relative font-semibold text-sm transition focus:outline-none px-0 py-0 rounded-full`}
                     style={{
-                      background: selectedPreset === preset.name ? 'rgba(25,216,159,0.10)' : '#23272a',
-                      transition: 'background 0.2s',
+                      background: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
+                      padding: isActive ? '2px' : '0',
+                      border: isActive ? 'none' : '1px solid #42454a',
+                      borderRadius: '9999px',
                     }}
                   >
-                    {preset.name}
-                  </span>
-                </button>
-              ))}
+                    <span
+                      className="block rounded-full px-5 py-2"
+                      style={{
+                        background: isActive ? 'rgba(25,216,159,0.10)' : '#383a40',
+                        color: isActive ? 'transparent' : '#f2f3f5',
+                        backgroundClip: isActive ? 'text' : 'initial',
+                        WebkitBackgroundClip: isActive ? 'text' : 'initial',
+                        WebkitTextFillColor: isActive ? 'transparent' : 'initial',
+                        backgroundImage: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
+                        transition: 'background 0.2s, color 0.2s',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {preset.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
             <form onSubmit={handleBulkGenerate} className="flex flex-col gap-4">
               <div>
