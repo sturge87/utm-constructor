@@ -509,7 +509,7 @@ export default function Home() {
                   className="w-full min-h-[80px] max-h-40 border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2 text-xs font-mono"
                   value={bulkUrls}
                   onChange={e => setBulkUrls(e.target.value)}
-                  placeholder="https://example.com/page1\nhttps://example.com/page2"
+                  placeholder="enter each URL on a new line"
                 />
               </div>
               <div>
