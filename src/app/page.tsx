@@ -469,39 +469,28 @@ export default function Home() {
         {/* Bulk Tab */}
         {activeTab === 'bulk' && (
           <div className="flex flex-col gap-6 bg-[#23272a] rounded shadow px-8 pt-6 pb-8 w-full max-w-3xl mx-auto">
-            <div className="text-[#b5bac1] text-xs font-bold mb-1">Get started with a preset</div>
-            <div className="flex gap-3 mb-2">
+            <div className="text-[#b5bac1] text-xs font-bold mb-1" style={{ marginBottom: '4px' }}>Get started with a preset</div>
+            <div className="flex gap-2 mb-2">
               {bulkPresets.map(preset => (
                 <button
                   key={preset.name}
                   type="button"
                   onClick={() => handlePresetClick(preset.name)}
-                  className={`relative px-5 py-2 rounded-full font-semibold text-sm transition focus:outline-none ${selectedPreset === preset.name ? 'text-[#19d89f]' : 'text-[#f2f3f5]'}`}
+                  className={`relative font-semibold text-sm transition focus:outline-none px-0 py-0 rounded-full ${selectedPreset === preset.name ? 'text-[#19d89f]' : 'text-[#f2f3f5]'}`}
                   style={{
-                    background: selectedPreset === preset.name
-                      ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)'
-                      : 'linear-gradient(90deg, #42454a, #23272a)',
-                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    WebkitMaskComposite: 'xor',
-                    maskComposite: 'exclude',
+                    background: 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)',
+                    padding: '2px',
                   }}
                 >
                   <span
+                    className="block rounded-full px-5 py-2"
                     style={{
-                      position: 'absolute',
-                      inset: 0,
-                      zIndex: -1,
-                      borderRadius: '9999px',
-                      padding: 2,
-                      background: selectedPreset === preset.name
-                        ? 'linear-gradient(90deg, #19d89f, #5865f2)'
-                        : 'linear-gradient(90deg, #42454a, #23272a)',
-                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                      WebkitMaskComposite: 'xor',
-                      maskComposite: 'exclude',
+                      background: selectedPreset === preset.name ? 'rgba(25,216,159,0.10)' : '#23272a',
+                      transition: 'background 0.2s',
                     }}
-                  />
-                  {preset.name}
+                  >
+                    {preset.name}
+                  </span>
                 </button>
               ))}
             </div>
