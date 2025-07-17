@@ -127,7 +127,6 @@ const bulkPresets = [
 export default function Home() {
   const [fields, setFields] = useState(initialFields);
   const [generatedUrl, setGeneratedUrl] = useState("");
-  const [copied, setCopied] = useState(false);
   const [savedUtms, setSavedUtms] = useState<UTM[]>([]);
   const [loadingUtms, setLoadingUtms] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -223,7 +222,6 @@ export default function Home() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFields({ ...fields, [e.target.name]: e.target.value });
     setGeneratedUrl("");
-    setCopied(false);
     if (e.target.name === "url") {
       setUrlError("");
     }
@@ -237,7 +235,6 @@ export default function Home() {
     }
     const url = buildUtmUrl(fields);
     setGeneratedUrl(url);
-    setCopied(false);
     // Save to Supabase
     if (url) {
       await supabase.from("utms").insert([
@@ -256,14 +253,6 @@ export default function Home() {
         .eq("website_url", fields.url)
         .order("created_at", { ascending: false });
       setSavedUtms(data || []);
-    }
-  };
-
-  const handleCopy = async () => {
-    if (generatedUrl) {
-      await navigator.clipboard.writeText(generatedUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
     }
   };
 
@@ -299,7 +288,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5]">Generate only compliant UTM's for all Katalon Campaigns.</h1>
+      <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-3xl mx-auto mt-8">
         <div className="flex w-full">
