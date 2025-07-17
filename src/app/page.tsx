@@ -152,24 +152,38 @@ export default function Home() {
     if (!urls.length || !bulkCampaign || !bulkSources.length || !bulkMediums.length) return;
     const combos: string[][] = [];
     const inserts: UTMInsert[] = [];
+    // Fetch all existing UTMs for these URLs and campaign
+    const { data: existingUtms } = await supabase
+      .from("utms")
+      .select("website_url, utm_source, utm_medium, utm_campaign, utm_content").in("website_url", urls).eq("utm_campaign", bulkCampaign);
     urls.forEach(url => {
       bulkSources.forEach(source => {
         bulkMediums.forEach(medium => {
-          const utm = buildUtmUrl({ url, source, medium, campaign: bulkCampaign, content: '' });
-          combos.push([
-            url,
-            source,
-            medium,
-            bulkCampaign,
-            utm
-          ]);
-          inserts.push({
-            website_url: url,
-            utm_source: source,
-            utm_medium: medium,
-            utm_campaign: bulkCampaign,
-            utm_content: null,
-          });
+          const content = '';
+          const exists = existingUtms && existingUtms.some(u =>
+            u.website_url === url &&
+            u.utm_source === source &&
+            u.utm_medium === medium &&
+            u.utm_campaign === bulkCampaign &&
+            (u.utm_content || '') === content
+          );
+          if (!exists) {
+            const utm = buildUtmUrl({ url, source, medium, campaign: bulkCampaign, content });
+            combos.push([
+              url,
+              source,
+              medium,
+              bulkCampaign,
+              utm
+            ]);
+            inserts.push({
+              website_url: url,
+              utm_source: source,
+              utm_medium: medium,
+              utm_campaign: bulkCampaign,
+              utm_content: null,
+            });
+          }
         });
       });
     });
@@ -232,17 +246,28 @@ export default function Home() {
       return;
     }
     const url = buildUtmUrl(fields);
-    // Save to Supabase
     if (url) {
-      await supabase.from("utms").insert([
-        {
-          website_url: fields.url,
-          utm_source: fields.source,
-          utm_medium: fields.medium,
-          utm_campaign: fields.campaign,
-          utm_content: fields.content || null,
-        },
-      ]);
+      // Check for duplicate
+      const { data: existing } = await supabase.from("utms").select("id").match({
+        website_url: fields.url,
+        utm_source: fields.source,
+        utm_medium: fields.medium,
+        utm_campaign: fields.campaign,
+        utm_content: fields.content || null,
+      });
+      if (!existing || existing.length === 0) {
+        await supabase.from("utms").insert([
+          {
+            website_url: fields.url,
+            utm_source: fields.source,
+            utm_medium: fields.medium,
+            utm_campaign: fields.campaign,
+            utm_content: fields.content || null,
+          },
+        ]);
+      } else {
+        alert("This UTM already exists and will not be saved again.");
+      }
       // Refresh saved UTMs
       const { data } = await supabase
         .from("utms")
