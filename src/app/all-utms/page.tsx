@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import JoeAvatar from "../../components/JoeAvatar";
 
@@ -42,6 +43,7 @@ export default function AllUtmsPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     setLoading(true);
@@ -54,6 +56,12 @@ export default function AllUtmsPage() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    // Pre-filter by website_url if present in query string
+    const urlParam = searchParams?.get('website_url');
+    if (urlParam) setFilters(f => ({ ...f, website_url: urlParam }));
+  }, [searchParams]);
 
   const filteredUtms = utms.filter((utm) =>
     (!filters.website_url || utm.website_url.toLowerCase().includes(filters.website_url.toLowerCase())) &&

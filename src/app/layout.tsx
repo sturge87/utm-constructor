@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,11 +21,28 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Only animate on the client
+  if (typeof window === 'undefined') {
+    return (
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <nav className="flex items-center justify-between p-4 bg-[#23272a] text-[#f2f3f5] border-b border-[#42454a]">
+            <Link href="/" className="text-xl font-bold text-[#19d89f]">UTM Constructor</Link>
+            <div className="flex gap-4">
+              <Link href="/all-utms" className="hover:underline text-[#f2f3f5]">All UTMs</Link>
+              <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#f2f3f5]">GitHub</a>
+            </div>
+          </nav>
+          {children}
+        </body>
+      </html>
+    );
+  }
+  // Client-side: animate page transitions
+  const pathname = usePathname();
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <nav className="flex items-center justify-between p-4 bg-[#23272a] text-[#f2f3f5] border-b border-[#42454a]">
           <Link href="/" className="text-xl font-bold text-[#19d89f]">UTM Constructor</Link>
           <div className="flex gap-4">
@@ -31,7 +50,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#f2f3f5]">GitHub</a>
           </div>
         </nav>
-        {children}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -24 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </body>
     </html>
   );

@@ -310,7 +310,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5] mt-[10vh]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
+      <h1 className="text-4xl font-extrabold mb-8 text-[#19d89f] mt-[10vh]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-5xl mx-auto mt-8">
         <div className="flex w-full">
@@ -592,72 +592,83 @@ export default function Home() {
       </div>
       {/* Saved UTMs */}
       <div className="flex-1">
-        <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
-          <h2 className="text-lg font-semibold mb-2 text-[#f2f3f5]">Saved UTMs for this URL</h2>
-          {/* Filters: only show if there are saved UTMs */}
-          {savedUtms.length > 0 && (
-            <div className="flex gap-2 mb-2">
-              <select
-                className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
-                value={filterCampaign}
-                onChange={e => setFilterCampaign(e.target.value)}
+        {activeTab === 'single' && (
+          <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
+            <h2 className="text-lg font-semibold mb-2" style={{ color: '#19d89f' }}>Saved UTMs for this URL</h2>
+            {fields.url && (
+              <a
+                href={`/all-utms?website_url=${encodeURIComponent(fields.url)}`}
+                className="text-[#19d89f] underline text-xs mb-2 inline-block hover:text-[#15b87f]"
+                style={{ marginBottom: 8 }}
               >
-                <option value="all">All Campaigns</option>
-                {uniqueCampaigns.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-              <select
-                className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
-                value={filterSource}
-                onChange={e => setFilterSource(e.target.value)}
-              >
-                <option value="all">All Sources</option>
-                {uniqueSources.map(s => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-          )}
-          {loadingUtms ? (
-            <div className="text-[#b5bac1]">Loading...</div>
-          ) : filteredUtms.length === 0 ? (
-            <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
-          ) : (
-            <ul className="space-y-2">
-              {filteredUtms.map((utm) => {
-                const url = buildUtmUrl({
-                  url: fields.url,
-                  source: utm.utm_source,
-                  medium: utm.utm_medium,
-                  campaign: utm.utm_campaign,
-                  content: utm.utm_content || "",
-                });
-                return (
-                  <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
-                    <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
-                    <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
-                    <div className="flex gap-2 items-center mt-1">
-                      <input
-                        className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
-                        value={url}
-                        readOnly
-                        onFocus={e => e.target.select()}
-                      />
-                      <button
-                        className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                        onClick={() => handleCopySaved(utm)}
-                        type="button"
-                      >
-                        {copiedId === utm.id ? "Copied!" : "Copy"}
-                      </button>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
+                View all UTMs for this page
+              </a>
+            )}
+            {/* Filters: only show if there are saved UTMs */}
+            {savedUtms.length > 0 && (
+              <div className="flex gap-2 mb-2">
+                <select
+                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
+                  value={filterCampaign}
+                  onChange={e => setFilterCampaign(e.target.value)}
+                >
+                  <option value="all">All Campaigns</option>
+                  {uniqueCampaigns.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <select
+                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
+                  value={filterSource}
+                  onChange={e => setFilterSource(e.target.value)}
+                >
+                  <option value="all">All Sources</option>
+                  {uniqueSources.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {loadingUtms ? (
+              <div className="text-[#b5bac1]">Loading...</div>
+            ) : filteredUtms.length === 0 ? (
+              <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
+            ) : (
+              <ul className="space-y-2">
+                {filteredUtms.map((utm) => {
+                  const url = buildUtmUrl({
+                    url: fields.url,
+                    source: utm.utm_source,
+                    medium: utm.utm_medium,
+                    campaign: utm.utm_campaign,
+                    content: utm.utm_content || "",
+                  });
+                  return (
+                    <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
+                      <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
+                      <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
+                      <div className="flex gap-2 items-center mt-1">
+                        <input
+                          className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
+                          value={url}
+                          readOnly
+                          onFocus={e => e.target.select()}
+                        />
+                        <button
+                          className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                          onClick={() => handleCopySaved(utm)}
+                          type="button"
+                        >
+                          {copiedId === utm.id ? "Copied!" : "Copy"}
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
       <JoeAvatar />
     </div>
