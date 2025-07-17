@@ -478,27 +478,26 @@ export default function Home() {
                     key={preset.name}
                     type="button"
                     onClick={() => handlePresetClick(preset.name)}
-                    className={`relative font-semibold text-sm transition focus:outline-none px-0 py-0 rounded-full`}
+                    className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
                     style={{
-                      background: 'none',
+                      background: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
                       padding: isActive ? '2px' : '0',
-                      border: isActive ? '2px solid transparent' : '1px solid #42454a',
-                      borderRadius: '9999px', // Always fully rounded
+                      border: !isActive ? '1px solid #42454a' : 'none',
+                      borderRadius: '9999px',
                       display: 'inline-block',
-                      borderImage: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff) 1' : 'none',
                     }}
                   >
                     <span
-                      className="block rounded-full px-5 py-2"
+                      className="block rounded-full px-5 py-2 w-full h-full"
                       style={{
                         background: '#23272a',
+                        fontWeight: 600,
                         color: isActive ? 'transparent' : '#f2f3f5',
+                        backgroundImage: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
                         backgroundClip: isActive ? 'text' : 'initial',
                         WebkitBackgroundClip: isActive ? 'text' : 'initial',
                         WebkitTextFillColor: isActive ? 'transparent' : 'initial',
-                        backgroundImage: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
                         transition: 'background 0.2s, color 0.2s',
-                        fontWeight: 600,
                       }}
                     >
                       {preset.name}
