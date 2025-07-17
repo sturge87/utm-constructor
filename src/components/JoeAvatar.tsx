@@ -25,15 +25,17 @@ export default function JoeAvatar() {
         border: '2px solid #19d89f',
         padding: 4,
         cursor: 'pointer',
+        maxWidth: 280,
+        width: '100%',
       }}
       title="Message Joe on Slack"
     >
       <img
         src="/joe.png"
         alt="Joe"
-        width={64}
-        height={64}
-        style={{ display: 'block', borderRadius: '50%' }}
+        width={280}
+        height={280}
+        style={{ display: 'block', borderRadius: '50%', width: '100%', maxWidth: 280 }}
       />
     </a>
   );
