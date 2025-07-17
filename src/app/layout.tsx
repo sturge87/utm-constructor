@@ -24,9 +24,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <nav className="w-full bg-white shadow mb-8 px-4 py-3 flex gap-6 items-center">
-          <Link href="/" className="font-bold text-lg text-[#19d89f]">Generator</Link>
-          <Link href="/all-utms" className="font-bold text-lg text-[#19d89f]">All UTMs</Link>
+        <nav className="flex items-center justify-between p-4 bg-[#23272a] text-[#f2f3f5] border-b border-[#42454a]">
+          <Link href="/" className="text-xl font-bold text-[#19d89f]">UTM Constructor</Link>
+          <div className="flex gap-4">
+            <Link href="/all-utms" className="hover:underline text-[#f2f3f5]">All UTMs</Link>
+            <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#f2f3f5]">GitHub</a>
+          </div>
         </nav>
         {children}
       </body>
