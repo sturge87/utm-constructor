@@ -11,6 +11,7 @@ export default function JoeAvatar() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setVisible(true), 200); // slight delay for effect
@@ -45,6 +46,8 @@ export default function JoeAvatar() {
     <>
       <button
         onClick={() => setModalOpen(true)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
           position: 'fixed',
           left: 0,
@@ -53,7 +56,7 @@ export default function JoeAvatar() {
           transition: 'transform 0.5s cubic-bezier(.4,2,.3,1), opacity 0.5s',
           transform: visible ? 'translateY(0)' : 'translateY(40px)',
           opacity: visible ? 1 : 0,
-          maxWidth: 280,
+          maxWidth: hovered ? 280 : 140,
           width: '100%',
           padding: 0,
           margin: 0,
@@ -68,9 +71,20 @@ export default function JoeAvatar() {
         <img
           src="/joe.png"
           alt="Joe"
-          width={280}
-          height={280}
-          style={{ display: 'block', width: '100%', maxWidth: 280, borderRadius: 0, margin: 0, padding: 0, background: 'none', boxShadow: 'none', border: 'none' }}
+          width={hovered ? 280 : 140}
+          height={hovered ? 280 : 140}
+          style={{
+            display: 'block',
+            width: '100%',
+            maxWidth: hovered ? 280 : 140,
+            borderRadius: 0,
+            margin: 0,
+            padding: 0,
+            background: 'none',
+            boxShadow: 'none',
+            border: 'none',
+            transition: 'max-width 0.4s cubic-bezier(.4,2,.3,1), width 0.4s cubic-bezier(.4,2,.3,1), height 0.4s cubic-bezier(.4,2,.3,1)',
+          }}
         />
       </button>
       {modalOpen && (
