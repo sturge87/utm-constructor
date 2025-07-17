@@ -299,9 +299,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <h1 className="text-3xl font-bold mb-6 text-[#f2f3f5]">UTM URL Generator</h1>
+      <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5]">Generate only compliant UTM's for all Katalon Campaigns.</h1>
       {/* Tabs + Generator Container */}
-      <div className="w-full max-w-3xl mx-auto">
+      <div className="w-full max-w-3xl mx-auto mt-8">
         <div className="flex w-full">
           <button
             className={`flex-1 py-3 rounded-tl-lg rounded-tr-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
@@ -309,12 +309,19 @@ export default function Home() {
             style={{ borderRight: '1px solid #23272a' }}
           >Single</button>
           <button
-            className={`flex-1 py-3 rounded-tr-lg rounded-tl-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'bulk' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
+            className={`flex-1 py-3 rounded-tr-lg rounded-tl-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'bulk' ? 'border-[#19d89f]' : 'border-transparent'} transition flex items-center justify-center gap-2`}
             onClick={() => setActiveTab('bulk')}
             style={{ borderLeft: '1px solid #23272a' }}
-          >Bulk</button>
+          >
+            Bulk
+            {activeTab === 'bulk' && (
+              <span className="ml-2 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: '#19d89f', color: '#23272a' }}>
+                (Ideal for new campaigns)
+              </span>
+            )}
+          </button>
         </div>
-        <div className="bg-[#23272a] shadow-md rounded-b-lg px-8 pt-6 pb-8 w-full">
+        <div className="bg-[#23272a] shadow-md rounded-b-lg px-8 pt-6 pb-8 w-full min-h-[600px] flex flex-col justify-start">
           {/* Single Tab */}
           {activeTab === 'single' && (
             <form className="flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
