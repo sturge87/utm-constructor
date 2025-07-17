@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { AnimatePresence, motion } from "framer-motion";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
 import JoeAvatar from "../../components/JoeAvatar";
 
@@ -39,6 +40,8 @@ export default function AllUtmsPage() {
     utm_content: "",
   });
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     setLoading(true);
@@ -66,6 +69,10 @@ export default function AllUtmsPage() {
   const mediums = unique(utms.map(u => u.utm_medium));
   const campaigns = unique(utms.map(u => u.utm_campaign));
   const contents = unique(utms.map(u => u.utm_content || ""));
+  const urls = unique(utms.map(u => u.website_url));
+
+  const paginatedUtms = filteredUtms.slice((page - 1) * pageSize, page * pageSize);
+  const totalPages = Math.ceil(filteredUtms.length / pageSize);
 
   const handleCopy = async (utm: UTM) => {
     const url = buildUtmUrl(utm);
@@ -75,69 +82,79 @@ export default function AllUtmsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <h1 className="text-2xl font-bold mb-6 text-[#f2f3f5]">All Saved UTMs</h1>
-      <div className="w-full max-w-6xl bg-[#23272a] rounded shadow p-6 mb-8">
-        <div className="flex flex-wrap gap-4 mb-4">
-          <input
-            className="border border-[#42454a] rounded px-2 py-1 text-xs w-48 bg-[#383a40] text-[#f2f3f5]"
-            placeholder="Website URL"
-            value={filters.website_url}
-            onChange={e => setFilters(f => ({ ...f, website_url: e.target.value }))}
-          />
-          <select
-            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
-            value={filters.utm_source}
-            onChange={e => setFilters(f => ({ ...f, utm_source: e.target.value }))}
-          >
-            <option value="">All Sources</option>
-            {sources.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <select
-            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
-            value={filters.utm_medium}
-            onChange={e => setFilters(f => ({ ...f, utm_medium: e.target.value }))}
-          >
-            <option value="">All Mediums</option>
-            {mediums.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-          <select
-            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
-            value={filters.utm_campaign}
-            onChange={e => setFilters(f => ({ ...f, utm_campaign: e.target.value }))}
-          >
-            <option value="">All Campaigns</option>
-            {campaigns.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <select
-            className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
-            value={filters.utm_content}
-            onChange={e => setFilters(f => ({ ...f, utm_content: e.target.value }))}
-          >
-            <option value="">All Content</option>
-            {contents.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-        </div>
-        {loading ? (
-          <div className="text-[#b5bac1]">Loading...</div>
-        ) : filteredUtms.length === 0 ? (
-          <div className="text-[#b5bac1]">No UTMs found.</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-[#383a40] text-[#19d89f]">
-                  <TableHead className="p-2 border border-[#42454a]">Website URL</TableHead>
-                  <TableHead className="p-2 border border-[#42454a]">Source</TableHead>
-                  <TableHead className="p-2 border border-[#42454a]">Medium</TableHead>
-                  <TableHead className="p-2 border border-[#42454a]">Campaign</TableHead>
-                  <TableHead className="p-2 border border-[#42454a]">Content</TableHead>
-                  <TableHead className="p-2 border border-[#42454a]">Created</TableHead>
-                  <TableHead className="p-2 border border-[#42454a]">Copy</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUtms.map(utm => (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="all-utms"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -24 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="min-h-screen flex flex-col items-center bg-[#313338] p-4 text-[#f2f3f5]"
+      >
+        <h1 className="text-2xl font-extrabold mb-6" style={{ color: '#19d89f' }}>Existing UTM&apos;s</h1>
+        <div className="w-full max-w-6xl bg-[#23272a] rounded shadow p-6 mb-8">
+          <div className="flex flex-wrap gap-4 mb-4">
+            <select
+              className="border border-[#42454a] rounded px-2 py-1 text-xs w-48 bg-[#383a40] text-[#f2f3f5]"
+              value={filters.website_url}
+              onChange={e => setFilters(f => ({ ...f, website_url: e.target.value }))}
+            >
+              <option value="">All URLs</option>
+              {urls.map(url => <option key={url} value={url}>{url}</option>)}
+            </select>
+            <select
+              className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
+              value={filters.utm_source}
+              onChange={e => setFilters(f => ({ ...f, utm_source: e.target.value }))}
+            >
+              <option value="">All Sources</option>
+              {sources.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <select
+              className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
+              value={filters.utm_medium}
+              onChange={e => setFilters(f => ({ ...f, utm_medium: e.target.value }))}
+            >
+              <option value="">All Mediums</option>
+              {mediums.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+            <select
+              className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
+              value={filters.utm_campaign}
+              onChange={e => setFilters(f => ({ ...f, utm_campaign: e.target.value }))}
+            >
+              <option value="">All Campaigns</option>
+              {campaigns.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <select
+              className="border border-[#42454a] rounded px-2 py-1 text-xs w-40 bg-[#383a40] text-[#f2f3f5]"
+              value={filters.utm_content}
+              onChange={e => setFilters(f => ({ ...f, utm_content: e.target.value }))}
+            >
+              <option value="">All Content</option>
+              {contents.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          {loading ? (
+            <div className="text-[#b5bac1]">Loading...</div>
+          ) : filteredUtms.length === 0 ? (
+            <div className="text-[#b5bac1]">No UTMs found.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#383a40] text-[#19d89f]">
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Website URL</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Source</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Medium</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Campaign</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Content</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Created</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Copy</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                {paginatedUtms.map(utm => (
                   <TableRow key={utm.id} className="even:bg-[#23272a]">
                     <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5]">{utm.website_url}</TableCell>
                     <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_source}</TableCell>
@@ -156,12 +173,31 @@ export default function AllUtmsPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </div>
-      <JoeAvatar />
-    </div>
+                </TableBody>
+              </Table>
+              {/* Pagination */}
+              <div className="flex justify-center items-center gap-2 mt-4">
+                <button
+                  className="px-3 py-1 rounded bg-[#383a40] text-[#19d89f] font-bold border border-[#42454a] disabled:opacity-50"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  Prev
+                </button>
+                <span className="text-[#f2f3f5] text-sm">Page {page} of {totalPages}</span>
+                <button
+                  className="px-3 py-1 rounded bg-[#383a40] text-[#19d89f] font-bold border border-[#42454a] disabled:opacity-50"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        <JoeAvatar />
+      </motion.div>
+    </AnimatePresence>
   );
 } 
