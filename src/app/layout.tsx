@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useRef, useEffect, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
   // Client-side: animate page transitions
   const pathname = usePathname();
+  const prevPath = useRef<string | null>(null);
+  const [direction, setDirection] = useState(1); // 1 = left, -1 = right
+
+  useEffect(() => {
+    if (prevPath.current) {
+      // Only care about / and /all-utms
+      if (prevPath.current === "/" && pathname === "/all-utms") {
+        setDirection(1); // slide left
+      } else if (prevPath.current === "/all-utms" && pathname === "/") {
+        setDirection(-1); // slide right
+      }
+      // If navigating elsewhere, default to left
+      else {
+        setDirection(1);
+      }
+    }
+    prevPath.current = pathname;
+  }, [pathname]);
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -53,9 +73,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -24 }}
+            initial={{ opacity: 0, x: 100 * direction }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 * direction }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
           >
             {children}
