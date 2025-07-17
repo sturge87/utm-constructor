@@ -483,7 +483,7 @@ export default function Home() {
                       background: 'none',
                       padding: isActive ? '2px' : '0',
                       border: isActive ? '2px solid transparent' : '1px solid #42454a',
-                      borderRadius: '9999px',
+                      borderRadius: '9999px', // Always fully rounded
                       display: 'inline-block',
                       borderImage: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff) 1' : 'none',
                     }}
