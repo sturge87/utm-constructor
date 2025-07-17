@@ -100,6 +100,30 @@ type UTMInsert = {
   utm_content: string | null;
 };
 
+// Preset definitions for bulk generator
+const bulkPresets = [
+  {
+    name: "Paid Ads",
+    sources: ["google", "bing", "linkedin", "facebook", "twitter"],
+    mediums: ["cpc", "paid_social", "display", "retargeting"],
+  },
+  {
+    name: "Email",
+    sources: ["newsletter", "mailchimp", "hubspot"],
+    mediums: ["email", "referral", "syndication"],
+  },
+  {
+    name: "Social",
+    sources: ["linkedin", "facebook", "twitter", "reddit", "quora"],
+    mediums: ["paid_social", "social", "influencer", "referral", "retargeting"],
+  },
+  {
+    name: "Review Sites",
+    sources: ["g2", "gartner"],
+    mediums: ["referral", "display", "syndication"],
+  },
+];
+
 export default function Home() {
   const [fields, setFields] = useState(initialFields);
   const [generatedUrl, setGeneratedUrl] = useState("");
@@ -117,6 +141,7 @@ export default function Home() {
   const [bulkSources, setBulkSources] = useState<string[]>([]);
   const [bulkMediums, setBulkMediums] = useState<string[]>([]);
   const [bulkResults, setBulkResults] = useState<string[][]>([]);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
   // Helper for all checked sources/mediums
   const toggleBulkSource = (src: string) => setBulkSources(s => s.includes(src) ? s.filter(x => x !== src) : [...s, src]);
@@ -153,6 +178,16 @@ export default function Home() {
     setBulkResults(combos);
     if (inserts.length) {
       await supabase.from("utms").insert(inserts);
+    }
+  };
+
+  // Handle preset click
+  const handlePresetClick = (presetName: string) => {
+    const preset = bulkPresets.find(p => p.name === presetName);
+    if (preset) {
+      setBulkSources(preset.sources);
+      setBulkMediums(preset.mediums);
+      setSelectedPreset(presetName);
     }
   };
 
@@ -434,6 +469,39 @@ export default function Home() {
         {/* Bulk Tab */}
         {activeTab === 'bulk' && (
           <div className="flex flex-col gap-6 bg-[#23272a] rounded shadow px-8 pt-6 pb-8 w-full max-w-3xl mx-auto">
+            {/* Presets section */}
+            <div className="flex gap-3 mb-2">
+              {bulkPresets.map(preset => (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => handlePresetClick(preset.name)}
+                  className={`relative px-5 py-2 rounded-full font-semibold text-sm transition focus:outline-none ${selectedPreset === preset.name ? 'text-[#19d89f]' : 'text-[#f2f3f5]'}`}
+                  style={{
+                    background: '#23272a',
+                    border: 'none',
+                    zIndex: 1,
+                  }}
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      zIndex: -1,
+                      borderRadius: '9999px',
+                      padding: 2,
+                      background: selectedPreset === preset.name
+                        ? 'linear-gradient(90deg, #19d89f, #5865f2)'
+                        : 'linear-gradient(90deg, #42454a, #23272a)',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                    }}
+                  />
+                  {preset.name}
+                </button>
+              ))}
+            </div>
             <form onSubmit={handleBulkGenerate} className="flex flex-col gap-4">
               <div>
                 <label className="block text-[#b5bac1] text-xs font-bold mb-1">URLs (one per line)</label>
