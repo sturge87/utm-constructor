@@ -126,7 +126,6 @@ const bulkPresets = [
 
 export default function Home() {
   const [fields, setFields] = useState(initialFields);
-  const [generatedUrl, setGeneratedUrl] = useState("");
   const [savedUtms, setSavedUtms] = useState<UTM[]>([]);
   const [loadingUtms, setLoadingUtms] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -221,7 +220,6 @@ export default function Home() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFields({ ...fields, [e.target.name]: e.target.value });
-    setGeneratedUrl("");
     if (e.target.name === "url") {
       setUrlError("");
     }
@@ -234,7 +232,6 @@ export default function Home() {
       return;
     }
     const url = buildUtmUrl(fields);
-    setGeneratedUrl(url);
     // Save to Supabase
     if (url) {
       await supabase.from("utms").insert([
