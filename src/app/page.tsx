@@ -480,9 +480,9 @@ export default function Home() {
                     onClick={() => handlePresetClick(preset.name)}
                     className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
                     style={{
-                      background: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
-                      padding: isActive ? '2px' : '0',
-                      border: !isActive ? '1px solid #42454a' : 'none',
+                      background: 'none',
+                      padding: '2px',
+                      border: isActive ? '2px solid #5865f2' : '1px solid #42454a',
                       borderRadius: '9999px',
                       display: 'inline-block',
                     }}
@@ -492,11 +492,7 @@ export default function Home() {
                       style={{
                         background: '#23272a',
                         fontWeight: 600,
-                        color: isActive ? 'transparent' : '#f2f3f5',
-                        backgroundImage: isActive ? 'linear-gradient(90deg, #19d89f, #5865f2, #a259f7, #43e0ff)' : 'none',
-                        backgroundClip: isActive ? 'text' : 'initial',
-                        WebkitBackgroundClip: isActive ? 'text' : 'initial',
-                        WebkitTextFillColor: isActive ? 'transparent' : 'initial',
+                        color: isActive ? '#5865f2' : '#f2f3f5',
                         transition: 'background 0.2s, color 0.2s',
                       }}
                     >
