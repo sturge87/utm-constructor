@@ -484,12 +484,13 @@ export default function Home() {
                       padding: isActive ? '2px' : '0',
                       border: isActive ? 'none' : '1px solid #42454a',
                       borderRadius: '9999px',
+                      display: 'inline-block',
                     }}
                   >
                     <span
                       className="block rounded-full px-5 py-2"
                       style={{
-                        background: isActive ? 'rgba(25,216,159,0.10)' : '#383a40',
+                        background: isActive ? '#23272a' : '#383a40',
                         color: isActive ? 'transparent' : '#f2f3f5',
                         backgroundClip: isActive ? 'text' : 'initial',
                         WebkitBackgroundClip: isActive ? 'text' : 'initial',
