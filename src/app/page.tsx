@@ -300,11 +300,6 @@ export default function Home() {
             style={{ borderLeft: '1px solid #23272a' }}
           >
             Bulk
-            {activeTab === 'bulk' && (
-              <span className="ml-2 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: '#19d89f', color: '#23272a' }}>
-                (Ideal for new campaigns)
-              </span>
-            )}
           </button>
         </div>
         <div className="bg-[#23272a] shadow-md rounded-b-lg px-8 pt-6 pb-8 w-full min-h-[600px] flex flex-col justify-start">
