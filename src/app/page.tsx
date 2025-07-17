@@ -480,7 +480,7 @@ export default function Home() {
                     onClick={() => handlePresetClick(preset.name)}
                     className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
                     style={{
-                      background: 'none',
+                      background: isActive ? 'linear-gradient(90deg, #19d89f 0%, #23272a 100%)' : 'none',
                       padding: '2px',
                       border: isActive ? '2px solid #5865f2' : '1px solid #42454a',
                       borderRadius: '9999px',
@@ -490,9 +490,9 @@ export default function Home() {
                     <span
                       className="block rounded-full px-5 py-2 w-full h-full"
                       style={{
-                        background: '#23272a',
+                        background: isActive ? 'transparent' : '#23272a',
                         fontWeight: 600,
-                        color: '#f2f3f5',
+                        color: isActive ? '#23272a' : '#f2f3f5',
                         transition: 'background 0.2s, color 0.2s',
                       }}
                     >
