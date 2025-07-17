@@ -310,7 +310,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5] mt-[150px]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
+      <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5] mt-[10vh]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-5xl mx-auto mt-8">
         <div className="flex w-full">
