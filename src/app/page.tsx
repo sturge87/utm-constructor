@@ -492,7 +492,7 @@ export default function Home() {
                       style={{
                         background: '#23272a',
                         fontWeight: 600,
-                        color: isActive ? '#5865f2' : '#f2f3f5',
+                        color: '#f2f3f5',
                         transition: 'background 0.2s, color 0.2s',
                       }}
                     >
