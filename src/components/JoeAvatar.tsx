@@ -13,20 +13,21 @@ export default function JoeAvatar() {
       rel="noopener noreferrer"
       style={{
         position: 'fixed',
-        left: 24,
-        bottom: 24,
+        left: 0,
+        bottom: 0,
         zIndex: 50,
         transition: 'transform 0.5s cubic-bezier(.4,2,.3,1), opacity 0.5s',
-        transform: visible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.8)',
+        transform: visible ? 'translateY(0)' : 'translateY(40px)',
         opacity: visible ? 1 : 0,
-        boxShadow: '0 4px 24px 0 #0008',
-        borderRadius: '50%',
-        background: '#23272a',
-        border: '2px solid #19d89f',
-        padding: 4,
-        cursor: 'pointer',
         maxWidth: 280,
         width: '100%',
+        padding: 0,
+        margin: 0,
+        background: 'none',
+        border: 'none',
+        boxShadow: 'none',
+        borderRadius: 0,
+        cursor: 'pointer',
       }}
       title="Message Joe on Slack"
     >
@@ -35,7 +36,7 @@ export default function JoeAvatar() {
         alt="Joe"
         width={280}
         height={280}
-        style={{ display: 'block', borderRadius: '50%', width: '100%', maxWidth: 280 }}
+        style={{ display: 'block', width: '100%', maxWidth: 280, borderRadius: 0, margin: 0, padding: 0, background: 'none', boxShadow: 'none', border: 'none' }}
       />
     </a>
   );
