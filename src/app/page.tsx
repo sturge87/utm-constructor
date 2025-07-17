@@ -287,7 +287,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
       <h1 className="text-4xl font-extrabold mb-8 text-[#f2f3f5]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
       {/* Tabs + Generator Container */}
-      <div className="w-full max-w-3xl mx-auto mt-8">
+      <div className="w-full max-w-5xl mx-auto mt-8">
         <div className="flex w-full">
           <button
             className={`flex-1 py-3 rounded-tl-lg rounded-tr-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
