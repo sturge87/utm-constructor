@@ -1,12 +1,8 @@
-"use client";
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { usePathname } from "next/navigation";
-import { useRef, useEffect, useState } from "react";
+import PageTransitionWrapper from "../components/PageTransitionWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,44 +20,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Only animate on the client
-  if (typeof window === 'undefined') {
-    return (
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <nav className="flex items-center justify-between p-4 bg-[#23272a] text-[#f2f3f5] border-b border-[#42454a]">
-            <Link href="/" className="text-xl font-bold text-[#19d89f]">UTM Constructor</Link>
-            <div className="flex gap-4">
-              <Link href="/all-utms" className="hover:underline text-[#f2f3f5]">All UTMs</Link>
-              <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#f2f3f5]">GitHub</a>
-            </div>
-          </nav>
-          {children}
-        </body>
-      </html>
-    );
-  }
-  // Client-side: animate page transitions
-  const pathname = usePathname();
-  const prevPath = useRef<string | null>(null);
-  const [direction, setDirection] = useState(1); // 1 = left, -1 = right
-
-  useEffect(() => {
-    if (prevPath.current) {
-      // Only care about / and /all-utms
-      if (prevPath.current === "/" && pathname === "/all-utms") {
-        setDirection(1); // slide left
-      } else if (prevPath.current === "/all-utms" && pathname === "/") {
-        setDirection(-1); // slide right
-      }
-      // If navigating elsewhere, default to left
-      else {
-        setDirection(1);
-      }
-    }
-    prevPath.current = pathname;
-  }, [pathname]);
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -72,17 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#f2f3f5]">GitHub</a>
           </div>
         </nav>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0, x: 100 * direction }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 * direction }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        <PageTransitionWrapper>
+          {children}
+        </PageTransitionWrapper>
       </body>
     </html>
   );
