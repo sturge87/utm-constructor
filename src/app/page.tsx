@@ -350,37 +350,37 @@ export default function Home() {
       <div className="w-full max-w-5xl mx-auto mt-[100px]">
         <div className="flex w-full items-center">
           <button
-            className={`flex-1 py-3 rounded-tl-lg rounded-tr-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
+            className={`flex-1 py-3 rounded-tl-lg rounded-tr-none font-semibold border-b-2 transition ${activeTab === 'single' ? 'bg-[#23272a] text-[#f2f3f5] border-[#19d89f]' : 'bg-[#2b2d31] text-[#b5bac1] border-transparent'}`}
             onClick={() => setActiveTab('single')}
             style={{ borderRight: '1px solid #23272a' }}
           >Single</button>
           <button
-            className={`flex-1 py-3 rounded-tr-lg rounded-tl-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'bulk' ? 'border-[#19d89f]' : 'border-transparent'} transition flex items-center justify-center gap-2`}
+            className={`flex-1 py-3 rounded-tr-lg rounded-tl-none font-semibold border-b-2 transition flex items-center justify-center gap-2 ${activeTab === 'bulk' ? 'bg-[#23272a] text-[#f2f3f5] border-[#19d89f]' : 'bg-[#2b2d31] text-[#b5bac1] border-transparent'}`}
             onClick={() => setActiveTab('bulk')}
             style={{ borderLeft: '1px solid #23272a' }}
           >
             Bulk
           </button>
         </div>
-        <div className="bg-[#23272a] shadow-md rounded-b-lg px-8 pt-6 pb-8 w-full min-h-[600px] flex flex-col justify-start relative">
-          {/* Tooltip in top right of generator */}
-          <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
-            <button
-              type="button"
-              aria-label="Show UTM field help"
-              className="w-5 h-5 flex items-center justify-center rounded-full bg-[#23272a] border border-[#42454a] text-[#19d89f] text-xs font-bold cursor-pointer hover:bg-[#383a40] focus:outline-none"
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              onFocus={() => setShowTooltip(true)}
-              onBlur={() => setShowTooltip(false)}
-              tabIndex={0}
-              style={{ position: 'relative' }}
-            >
-              ?
-            </button>
-            {showTooltip && (
-              <>
-                <span className="ml-2 text-[#b5bac1] text-xs font-semibold">Need some help?</span>
+        <div className="bg-[#23272a] shadow-md rounded-b-lg p-10 w-full min-h-[600px] flex flex-col justify-start relative">
+          {/* Always show '? Need some help?' in top right, 15px from top/right */}
+          <div className="absolute" style={{ top: 15, right: 15, zIndex: 10 }}>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Show UTM field help"
+                className="w-5 h-5 flex items-center justify-center rounded-full bg-[#23272a] border border-[#42454a] text-[#19d89f] text-xs font-bold cursor-pointer hover:bg-[#383a40] focus:outline-none"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onFocus={() => setShowTooltip(true)}
+                onBlur={() => setShowTooltip(false)}
+                tabIndex={0}
+                style={{ position: 'relative' }}
+              >
+                ?
+              </button>
+              <span className="text-[#b5bac1] text-xs font-semibold select-none">Need some help?</span>
+              {showTooltip && (
                 <div className="absolute right-0 top-8 z-50 bg-[#23272a] border border-[#42454a] rounded shadow-lg p-3 text-xs text-[#f2f3f5] min-w-[420px]" style={{ whiteSpace: 'normal' }}>
                   <table className="w-full border-collapse">
                     <thead>
@@ -401,224 +401,62 @@ export default function Home() {
                     </tbody>
                   </table>
                 </div>
-              </>
-            )}
-          </div>
-          {/* Single Tab */}
-          {activeTab === 'single' && (
-            <form className="flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
-              <div className="flex flex-col w-48">
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">
-                  Website URL <span className="text-red-400">*</span>
-                </label>
-                <input
-                  className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                  id="url"
-                  name="url"
-                  type="text"
-                  autoComplete="off"
-                  value={fields.url}
-                  onChange={handleChange}
-                  placeholder="yourwebsite.com/page"
-                  aria-invalid={!!urlError}
-                />
-                {urlError && (
-                  <span className="text-red-400 text-xs mt-1">{urlError}</span>
-                )}
-              </div>
-              <div className="flex flex-col w-40">
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="source">
-                  Source <span className="text-red-400">*</span>
-                </label>
-                <select
-                  className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                  id="source"
-                  name="source"
-                  required
-                  value={fields.source}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Select source</option>
-                  {sourceOptions.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col w-48">
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
-                  Campaign <span className="text-red-400">*</span>
-                </label>
-                <select
-                  className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                  id="campaign"
-                  name="campaign"
-                  required
-                  value={fields.campaign}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Select campaign</option>
-                  {campaignOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col w-40">
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
-                  Medium <span className="text-red-400">*</span>
-                </label>
-                <select
-                  className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                  id="medium"
-                  name="medium"
-                  required
-                  value={fields.medium}
-                  onChange={handleChange}
-                  disabled={!fields.source}
-                >
-                  <option value="" disabled>Select medium</option>
-                  {filteredMediumOptions.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col w-48">
-                <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
-                  Content
-                </label>
-                <input
-                  className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                  id="content"
-                  name="content"
-                  type="text"
-                  value={fields.content}
-                  onChange={handleChange}
-                  placeholder="Optional content value"
-                />
-              </div>
-              {advancedMode && (
-                <div className="flex flex-wrap gap-4 w-full mt-2">
-                  {advancedFields.map(f => (
-                    <div className="flex flex-col w-40" key={f.field}>
-                      <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={f.field}>{f.field}</label>
-                      <input
-                        className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                        id={f.field}
-                        name={f.field}
-                        type="text"
-                        value={fields[f.field] || ''}
-                        onChange={handleChange}
-                        placeholder={f.desc}
-                      />
-                    </div>
-                  ))}
-                </div>
               )}
-              {/* Live UTM Preview (hidden on mobile) */}
-              <div className="w-full mb-2 hidden sm:block">
-                <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
-                <div className="flex flex-row flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]" style={{ gap: '2px' }}>
-                  <motion.span
-                    key={fields.url || 'empty-url'}
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: fields.url ? 1 : 0.95, opacity: fields.url ? 1 : 0.5 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    className="inline-block"
-                  >
-                    {fields.url || 'yourwebsite.com/page'}
-                  </motion.span>
-                  <AnimatePresence>
-                    {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
-                      const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
-                      return (
-                        <motion.span
-                          key={val as string}
-                          initial={{ scale: 0.95, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.95, opacity: 0 }}
-                          transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.07 }}
-                          className="inline-block"
-                          style={{ color: '#19d89f' }}
-                        >
-                          {paramNames[idx]}{val}
-                        </motion.span>
-                      );
-                    })}
-                    {advancedMode && advancedFields.map(f => fields[f.field] && (
-                      <motion.span
-                        key={f.field}
-                        initial={{ scale: 0.95, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.95, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 + advancedFields.indexOf(f) * 0.07 }}
-                        className="inline-block"
-                        style={{ color: '#19d89f' }}
-                      >
-                        &amp;{f.field}={fields[f.field]}
-                      </motion.span>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="w-full h-10 px-6 bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
-              >
-                Generate UTM
-              </button>
-            </form>
-          )}
-          {/* Bulk Tab */}
-          {activeTab === 'bulk' && (
-            <div className="flex flex-col gap-6 w-full">
-              <div className="text-[#b5bac1] text-xs font-bold mb-1" style={{ marginBottom: '4px' }}>Get started with a preset</div>
-              <div className="flex gap-2 mb-2">
-                {bulkPresets.map(preset => {
-                  const isActive = selectedPreset === preset.name;
-                  return (
-                    <button
-                      key={preset.name}
-                      type="button"
-                      onClick={() => handlePresetClick(preset.name)}
-                      className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
-                      style={{
-                        background: isActive ? 'linear-gradient(90deg, #19d89f 0%, #158f6b 100%)' : 'none',
-                        padding: '2px',
-                        border: isActive ? '2px solid #19d89f' : '1px solid #42454a',
-                        borderRadius: '9999px',
-                        display: 'inline-block',
-                      }}
-                    >
-                      <span
-                        className="block rounded-full px-5 py-2 w-full h-full"
-                        style={{
-                          background: isActive ? 'transparent' : '#23272a',
-                          fontWeight: 600,
-                          color: '#f2f3f5',
-                          transition: 'background 0.2s, color 0.2s',
-                        }}
-                      >
-                        {preset.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              <form onSubmit={handleBulkGenerate} className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1">URLs (one per line)</label>
-                  <textarea
-                    className="w-full min-h-[80px] max-h-40 border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2 text-xs font-mono"
-                    value={bulkUrls}
-                    onChange={e => setBulkUrls(e.target.value)}
-                    placeholder="enter each URL on a new line"
+            </div>
+          </div>
+          {/* Add extra space above generator fields */}
+          <div className="mt-8">
+            {/* Single Tab */}
+            {activeTab === 'single' && (
+              <form className="flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
+                <div className="flex flex-col w-48">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">
+                    Website URL <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="url"
+                    name="url"
+                    type="text"
+                    autoComplete="off"
+                    value={fields.url}
+                    onChange={handleChange}
+                    placeholder="yourwebsite.com/page"
+                    aria-invalid={!!urlError}
                   />
+                  {urlError && (
+                    <span className="text-red-400 text-xs mt-1">{urlError}</span>
+                  )}
                 </div>
-                <div>
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1">Campaign</label>
+                <div className="flex flex-col w-40">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="source">
+                    Source <span className="text-red-400">*</span>
+                  </label>
                   <select
-                    className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
-                    value={bulkCampaign}
-                    onChange={e => setBulkCampaign(e.target.value)}
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="source"
+                    name="source"
+                    required
+                    value={fields.source}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>Select source</option>
+                    {sourceOptions.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col w-48">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
+                    Campaign <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="campaign"
+                    name="campaign"
+                    required
+                    value={fields.campaign}
+                    onChange={handleChange}
                   >
                     <option value="" disabled>Select campaign</option>
                     {campaignOptions.map(opt => (
@@ -626,179 +464,343 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-wrap gap-6">
-                  <div>
-                    <div className="text-[#b5bac1] text-xs font-bold mb-1">Sources</div>
-                    <div className="flex flex-wrap gap-2">
-                      {sourceOptions.map(src => (
-                        <label key={src} className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={bulkSources.includes(src)}
-                            onChange={() => toggleBulkSource(src)}
-                            className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
-                          />
-                          <span className="text-xs">{src}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-[#b5bac1] text-xs font-bold mb-1">Mediums</div>
-                    <div className="flex flex-wrap gap-2">
-                      {filteredBulkMediums.map(med => (
-                        <label key={med} className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={bulkMediums.includes(med)}
-                            onChange={() => toggleBulkMedium(med)}
-                            className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
-                          />
-                          <span className="text-xs">{med}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                <div className="flex flex-col w-40">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
+                    Medium <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="medium"
+                    name="medium"
+                    required
+                    value={fields.medium}
+                    onChange={handleChange}
+                    disabled={!fields.source}
+                  >
+                    <option value="" disabled>Select medium</option>
+                    {filteredMediumOptions.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col w-48">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
+                    Content
+                  </label>
+                  <input
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="content"
+                    name="content"
+                    type="text"
+                    value={fields.content}
+                    onChange={handleChange}
+                    placeholder="Optional content value"
+                  />
                 </div>
                 {advancedMode && (
-                  <div className="w-full mt-2">
-                    <div className="text-[#b5bac1] text-xs font-bold mb-1">Advanced Fields</div>
-                    <div className="flex flex-wrap gap-4 w-full">
-                      {advancedFields.map(f => (
-                        <div className="flex flex-col w-40" key={f.field}>
-                          <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={`bulk_${f.field}`}>{f.field}</label>
-                          <input
-                            className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                            id={`bulk_${f.field}`}
-                            name={`bulk_${f.field}`}
-                            type="text"
-                            value={bulkAdvancedFields[f.field] || ''}
-                            onChange={e => setBulkAdvancedFields({ ...bulkAdvancedFields, [f.field]: e.target.value })}
-                            placeholder={f.desc}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex flex-wrap gap-4 w-full mt-2">
+                    {advancedFields.map(f => (
+                      <div className="flex flex-col w-40" key={f.field}>
+                        <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={f.field}>{f.field}</label>
+                        <input
+                          className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                          id={f.field}
+                          name={f.field}
+                          type="text"
+                          value={fields[f.field] || ''}
+                          onChange={handleChange}
+                          placeholder={f.desc}
+                        />
+                      </div>
+                    ))}
                   </div>
                 )}
+                {/* Live UTM Preview (hidden on mobile) */}
+                <div className="w-full mb-2 hidden sm:block">
+                  <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
+                  <div className="flex flex-row flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]" style={{ gap: '2px' }}>
+                    <motion.span
+                      key={fields.url || 'empty-url'}
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: fields.url ? 1 : 0.95, opacity: fields.url ? 1 : 0.5 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      className="inline-block"
+                    >
+                      {fields.url || 'yourwebsite.com/page'}
+                    </motion.span>
+                    <AnimatePresence>
+                      {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
+                        const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
+                        return (
+                          <motion.span
+                            key={val as string}
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.07 }}
+                            className="inline-block"
+                            style={{ color: '#19d89f' }}
+                          >
+                            {paramNames[idx]}{val}
+                          </motion.span>
+                        );
+                      })}
+                      {advancedMode && advancedFields.map(f => fields[f.field] && (
+                        <motion.span
+                          key={f.field}
+                          initial={{ scale: 0.95, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.95, opacity: 0 }}
+                          transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 + advancedFields.indexOf(f) * 0.07 }}
+                          className="inline-block"
+                          style={{ color: '#19d89f' }}
+                        >
+                          &amp;{f.field}={fields[f.field]}
+                        </motion.span>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </div>
                 <button
                   type="submit"
-                  className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
+                  className="w-full h-10 px-6 bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
                 >
-                  Generate Bulk UTMs
+                  Generate UTM
                 </button>
               </form>
-              {bulkResults.length > 0 && (
-                <div className="overflow-x-auto mt-4">
-                  <table className="w-full text-xs bg-[#23272a] border border-[#42454a] rounded">
-                    <thead>
-                      <tr className="bg-[#383a40]">
-                        <th className="p-2 text-left">URL</th>
-                        <th className="p-2 text-left">Source</th>
-                        <th className="p-2 text-left">Medium</th>
-                        <th className="p-2 text-left">Campaign</th>
-                        <th className="p-2 text-left">UTM Link</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {bulkResults.map(([url, source, medium, campaign, utm], i) => (
-                        <tr key={i} className="border-t border-[#42454a]">
-                          <td className="p-2 font-mono text-[#b5bac1]">{url}</td>
-                          <td className="p-2">{source}</td>
-                          <td className="p-2">{medium}</td>
-                          <td className="p-2">{campaign}</td>
-                          <td className="p-2 font-mono text-[#19d89f] break-all">{utm}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            )}
+            {/* Bulk Tab */}
+            {activeTab === 'bulk' && (
+              <div className="flex flex-col gap-6 w-full">
+                <div className="text-[#b5bac1] text-xs font-bold mb-1" style={{ marginBottom: '4px' }}>Get started with a preset</div>
+                <div className="flex gap-2 mb-2">
+                  {bulkPresets.map(preset => {
+                    const isActive = selectedPreset === preset.name;
+                    return (
+                      <button
+                        key={preset.name}
+                        type="button"
+                        onClick={() => handlePresetClick(preset.name)}
+                        className={`relative font-semibold text-sm transition focus:outline-none rounded-full`}
+                        style={{
+                          background: isActive ? 'linear-gradient(90deg, #19d89f 0%, #158f6b 100%)' : 'none',
+                          padding: '2px',
+                          border: isActive ? '2px solid #19d89f' : '1px solid #42454a',
+                          borderRadius: '9999px',
+                          display: 'inline-block',
+                        }}
+                      >
+                        <span
+                          className="block rounded-full px-5 py-2 w-full h-full"
+                          style={{
+                            background: isActive ? 'transparent' : '#23272a',
+                            fontWeight: 600,
+                            color: '#f2f3f5',
+                            transition: 'background 0.2s, color 0.2s',
+                          }}
+                        >
+                          {preset.name}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
+                <form onSubmit={handleBulkGenerate} className="flex flex-col gap-4">
+                  <div>
+                    <label className="block text-[#b5bac1] text-xs font-bold mb-1">URLs (one per line)</label>
+                    <textarea
+                      className="w-full min-h-[80px] max-h-40 border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2 text-xs font-mono"
+                      value={bulkUrls}
+                      onChange={e => setBulkUrls(e.target.value)}
+                      placeholder="enter each URL on a new line"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#b5bac1] text-xs font-bold mb-1">Campaign</label>
+                    <select
+                      className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
+                      value={bulkCampaign}
+                      onChange={e => setBulkCampaign(e.target.value)}
+                    >
+                      <option value="" disabled>Select campaign</option>
+                      {campaignOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-wrap gap-6">
+                    <div>
+                      <div className="text-[#b5bac1] text-xs font-bold mb-1">Sources</div>
+                      <div className="flex flex-wrap gap-2">
+                        {sourceOptions.map(src => (
+                          <label key={src} className="flex items-center gap-1 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={bulkSources.includes(src)}
+                              onChange={() => toggleBulkSource(src)}
+                              className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
+                            />
+                            <span className="text-xs">{src}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[#b5bac1] text-xs font-bold mb-1">Mediums</div>
+                      <div className="flex flex-wrap gap-2">
+                        {filteredBulkMediums.map(med => (
+                          <label key={med} className="flex items-center gap-1 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={bulkMediums.includes(med)}
+                              onChange={() => toggleBulkMedium(med)}
+                              className="accent-[#19d89f] bg-[#383a40] border-[#42454a]"
+                            />
+                            <span className="text-xs">{med}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {advancedMode && (
+                    <div className="w-full mt-2">
+                      <div className="text-[#b5bac1] text-xs font-bold mb-1">Advanced Fields</div>
+                      <div className="flex flex-wrap gap-4 w-full">
+                        {advancedFields.map(f => (
+                          <div className="flex flex-col w-40" key={f.field}>
+                            <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={`bulk_${f.field}`}>{f.field}</label>
+                            <input
+                              className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                              id={`bulk_${f.field}`}
+                              name={`bulk_${f.field}`}
+                              type="text"
+                              value={bulkAdvancedFields[f.field] || ''}
+                              onChange={e => setBulkAdvancedFields({ ...bulkAdvancedFields, [f.field]: e.target.value })}
+                              placeholder={f.desc}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
+                  >
+                    Generate Bulk UTMs
+                  </button>
+                </form>
+                {bulkResults.length > 0 && (
+                  <div className="overflow-x-auto mt-4">
+                    <table className="w-full text-xs bg-[#23272a] border border-[#42454a] rounded">
+                      <thead>
+                        <tr className="bg-[#383a40]">
+                          <th className="p-2 text-left">URL</th>
+                          <th className="p-2 text-left">Source</th>
+                          <th className="p-2 text-left">Medium</th>
+                          <th className="p-2 text-left">Campaign</th>
+                          <th className="p-2 text-left">UTM Link</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {bulkResults.map(([url, source, medium, campaign, utm], i) => (
+                          <tr key={i} className="border-t border-[#42454a]">
+                            <td className="p-2 font-mono text-[#b5bac1]">{url}</td>
+                            <td className="p-2">{source}</td>
+                            <td className="p-2">{medium}</td>
+                            <td className="p-2">{campaign}</td>
+                            <td className="p-2 font-mono text-[#19d89f] break-all">{utm}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Saved UTMs */}
+        <div className="flex-1">
+          {activeTab === 'single' && (
+            <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
+              <h2 className="text-lg font-semibold mb-2" style={{ color: '#19d89f' }}>Saved UTMs for this URL</h2>
+              {fields.url && (
+                <a
+                  href={`/all-utms?website_url=${encodeURIComponent(fields.url)}`}
+                  className="text-[#19d89f] underline text-xs mb-2 inline-block hover:text-[#15b87f]"
+                  style={{ marginBottom: 8 }}
+                >
+                  View all UTMs for this page
+                </a>
+              )}
+              {/* Filters: only show if there are saved UTMs */}
+              {savedUtms.length > 0 && (
+                <div className="flex gap-2 mb-2">
+                  <select
+                    className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
+                    value={filterCampaign}
+                    onChange={e => setFilterCampaign(e.target.value)}
+                  >
+                    <option value="all">All Campaigns</option>
+                    {uniqueCampaigns.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <select
+                    className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
+                    value={filterSource}
+                    onChange={e => setFilterSource(e.target.value)}
+                  >
+                    <option value="all">All Sources</option>
+                    {uniqueSources.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              {loadingUtms ? (
+                <div className="text-[#b5bac1]">Loading...</div>
+              ) : filteredUtms.length === 0 ? (
+                <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
+              ) : (
+                <ul className="space-y-2">
+                  {filteredUtms.map((utm) => {
+                    const url = buildUtmUrl({
+                      url: fields.url,
+                      source: utm.utm_source,
+                      medium: utm.utm_medium,
+                      campaign: utm.utm_campaign,
+                      content: utm.utm_content || "",
+                    });
+                    return (
+                      <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
+                        <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
+                        <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
+                        <div className="flex gap-2 items-center mt-1">
+                          <input
+                            className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
+                            value={url}
+                            readOnly
+                            onFocus={e => e.target.select()}
+                          />
+                          <button
+                            className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                            onClick={() => handleCopySaved(utm)}
+                            type="button"
+                          >
+                            {copiedId === utm.id ? "Copied!" : "Copy"}
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </div>
           )}
         </div>
+        <JoeAvatar />
       </div>
-      {/* Saved UTMs */}
-      <div className="flex-1">
-        {activeTab === 'single' && (
-          <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
-            <h2 className="text-lg font-semibold mb-2" style={{ color: '#19d89f' }}>Saved UTMs for this URL</h2>
-            {fields.url && (
-              <a
-                href={`/all-utms?website_url=${encodeURIComponent(fields.url)}`}
-                className="text-[#19d89f] underline text-xs mb-2 inline-block hover:text-[#15b87f]"
-                style={{ marginBottom: 8 }}
-              >
-                View all UTMs for this page
-              </a>
-            )}
-            {/* Filters: only show if there are saved UTMs */}
-            {savedUtms.length > 0 && (
-              <div className="flex gap-2 mb-2">
-                <select
-                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
-                  value={filterCampaign}
-                  onChange={e => setFilterCampaign(e.target.value)}
-                >
-                  <option value="all">All Campaigns</option>
-                  {uniqueCampaigns.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-                <select
-                  className="border border-[#42454a] bg-[#383a40] text-[#f2f3f5] rounded px-2 py-1 text-xs"
-                  value={filterSource}
-                  onChange={e => setFilterSource(e.target.value)}
-                >
-                  <option value="all">All Sources</option>
-                  {uniqueSources.map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {loadingUtms ? (
-              <div className="text-[#b5bac1]">Loading...</div>
-            ) : filteredUtms.length === 0 ? (
-              <div className="text-[#b5bac1]">No UTMs found for this URL.</div>
-            ) : (
-              <ul className="space-y-2">
-                {filteredUtms.map((utm) => {
-                  const url = buildUtmUrl({
-                    url: fields.url,
-                    source: utm.utm_source,
-                    medium: utm.utm_medium,
-                    campaign: utm.utm_campaign,
-                    content: utm.utm_content || "",
-                  });
-                  return (
-                    <li key={utm.id} className="bg-[#383a40] border border-[#42454a] rounded p-2 text-xs flex flex-col gap-1 text-[#f2f3f5]">
-                      <span><b>Source:</b> {utm.utm_source} | <b>Medium:</b> {utm.utm_medium} | <b>Campaign:</b> {utm.utm_campaign} {utm.utm_content && <>| <b>Content:</b> {utm.utm_content}</>}</span>
-                      <span className="text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</span>
-                      <div className="flex gap-2 items-center mt-1">
-                        <input
-                          className="flex-1 border border-[#42454a] rounded px-2 py-1 text-xs text-[#f2f3f5] bg-[#23272a] cursor-text"
-                          value={url}
-                          readOnly
-                          onFocus={e => e.target.select()}
-                        />
-                        <button
-                          className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                          onClick={() => handleCopySaved(utm)}
-                          type="button"
-                        >
-                          {copiedId === utm.id ? "Copied!" : "Copy"}
-                        </button>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-        )}
-      </div>
-      <JoeAvatar />
-    </div>
-  );
-}
+    );
+  }
