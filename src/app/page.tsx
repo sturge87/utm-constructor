@@ -30,7 +30,7 @@ function buildUtmUrl(fields: typeof initialFields) {
   return urlObj.toString();
 }
 
-const initialFields = {
+const initialFields: { [key: string]: string } = {
   url: "",
   source: "",
   medium: "",
@@ -124,8 +124,26 @@ const bulkPresets = [
   },
 ];
 
+// Tooltip table content
+const utmFieldTable = [
+  { field: 'utm_source', required: true, desc: 'Where the traffic comes from (e.g., google, linkedin, newsletter)' },
+  { field: 'utm_medium', required: true, desc: 'The channel or type of traffic (e.g., cpc, email, social, referral)' },
+  { field: 'utm_campaign', required: true, desc: 'Name of the marketing initiative (e.g., q3_launch, summer_promo)' },
+  { field: 'utm_content', required: false, desc: 'Used for A/B testing or differentiating creatives (e.g., blue_cta, version_b)' },
+  { field: 'utm_term', required: false, desc: 'Used for paid search to capture keywords or targeting terms' },
+];
+const advancedFields = [
+  { field: 'placement', desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
+  { field: 'audience_segment', desc: 'Custom field for targeted audience (e.g., product_managers, test_automation_buyers)' },
+  { field: 'geo', desc: 'Geo-targeting code (e.g., US, EU, SEA)' },
+  { field: 'device', desc: 'Optional device breakout (e.g., mobile, desktop)' },
+  { field: 'matchtype', desc: 'Paid search only (e.g., exact, phrase, broad)' },
+  { field: 'adgroup', desc: 'Paid search ad group identifier' },
+  { field: 'creative_id', desc: 'Asset/creative ID used in analytics naming conventions' },
+];
+
 export default function Home() {
-  const [fields, setFields] = useState(initialFields);
+  const [fields, setFields] = useState<{ [key: string]: string }>(initialFields);
   const [savedUtms, setSavedUtms] = useState<UTM[]>([]);
   const [loadingUtms, setLoadingUtms] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -140,6 +158,9 @@ export default function Home() {
   const [bulkMediums, setBulkMediums] = useState<string[]>([]);
   const [bulkResults, setBulkResults] = useState<string[][]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [advancedMode, setAdvancedMode] = useState(false);
+  const [bulkAdvancedFields, setBulkAdvancedFields] = useState<{ [key: string]: string }>({});
 
   // Helper for all checked sources/mediums
   const toggleBulkSource = (src: string) => setBulkSources(s => s.includes(src) ? s.filter(x => x !== src) : [...s, src]);
@@ -310,7 +331,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <h1 className="text-4xl font-extrabold mb-8 text-[#19d89f] mt-[10vh]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
+      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-between mb-2 mt-[10vh]">
+        <h1 className="text-4xl font-extrabold mb-0 text-[#19d89f]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
+        <div className="flex items-center gap-2">
+          <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} className="sr-only peer" />
+            <div className="w-11 h-6 bg-[#383a40] peer-focus:outline-none rounded-full peer peer-checked:bg-[#19d89f] transition"></div>
+            <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
+          </label>
+        </div>
+      </div>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-5xl mx-auto mt-8">
         <div className="flex w-full">
@@ -419,6 +450,24 @@ export default function Home() {
                   placeholder="Optional content value"
                 />
               </div>
+              {advancedMode && (
+                <div className="flex flex-wrap gap-4 w-full mt-2">
+                  {advancedFields.map(f => (
+                    <div className="flex flex-col w-40" key={f.field}>
+                      <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={f.field}>{f.field}</label>
+                      <input
+                        className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                        id={f.field}
+                        name={f.field}
+                        type="text"
+                        value={fields[f.field] || ''}
+                        onChange={handleChange}
+                        placeholder={f.desc}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
               {/* Live UTM Preview (hidden on mobile) */}
               <div className="w-full mb-2 hidden sm:block">
                 <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
@@ -450,6 +499,46 @@ export default function Home() {
                       );
                     })}
                   </AnimatePresence>
+                </div>
+              </div>
+              {/* Tooltip above button */}
+              <div className="w-full flex flex-row justify-end mb-2">
+                <div className="flex items-center gap-2 relative">
+                  <button
+                    type="button"
+                    aria-label="Show UTM field help"
+                    className="w-5 h-5 flex items-center justify-center rounded-full bg-[#23272a] border border-[#42454a] text-[#19d89f] text-xs font-bold cursor-pointer hover:bg-[#383a40] focus:outline-none"
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    onFocus={() => setShowTooltip(true)}
+                    onBlur={() => setShowTooltip(false)}
+                    tabIndex={0}
+                    style={{ position: 'relative' }}
+                  >
+                    ?
+                  </button>
+                  {showTooltip && (
+                    <div className="absolute right-0 top-8 z-50 bg-[#23272a] border border-[#42454a] rounded shadow-lg p-3 text-xs text-[#f2f3f5] min-w-[320px]" style={{ whiteSpace: 'normal' }}>
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr>
+                            <th className="text-left pb-1">Field</th>
+                            <th className="text-left pb-1">Required</th>
+                            <th className="text-left pb-1">Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {utmFieldTable.map(row => (
+                            <tr key={row.field}>
+                              <td className="pr-2 font-mono text-[#19d89f]">{row.field}</td>
+                              <td className="pr-2">{row.required ? '✅ Yes' : '❌ Optional'}</td>
+                              <td>{row.desc}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               </div>
               <button
@@ -553,6 +642,24 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+                {advancedMode && (
+                  <div className="flex flex-wrap gap-4 w-full mt-2">
+                    {advancedFields.map(f => (
+                      <div className="flex flex-col w-40" key={f.field}>
+                        <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={`bulk_${f.field}`}>{f.field}</label>
+                        <input
+                          className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                          id={`bulk_${f.field}`}
+                          name={`bulk_${f.field}`}
+                          type="text"
+                          value={bulkAdvancedFields[f.field] || ''}
+                          onChange={e => setBulkAdvancedFields({ ...bulkAdvancedFields, [f.field]: e.target.value })}
+                          placeholder={f.desc}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <button
                   type="submit"
                   className="w-full bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
