@@ -348,7 +348,7 @@ export default function Home() {
       </div>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-5xl mx-auto mt-8">
-        <div className="flex w-full">
+        <div className="flex w-full items-center">
           <button
             className={`flex-1 py-3 rounded-tl-lg rounded-tr-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
             onClick={() => setActiveTab('single')}
@@ -361,6 +361,49 @@ export default function Home() {
           >
             Bulk
           </button>
+          {/* Move tooltip to end of Single tab */}
+          {activeTab === 'single' && (
+            <div className="flex items-center gap-2 ml-auto relative">
+              <button
+                type="button"
+                aria-label="Show UTM field help"
+                className="w-5 h-5 flex items-center justify-center rounded-full bg-[#23272a] border border-[#42454a] text-[#19d89f] text-xs font-bold cursor-pointer hover:bg-[#383a40] focus:outline-none"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                onFocus={() => setShowTooltip(true)}
+                onBlur={() => setShowTooltip(false)}
+                tabIndex={0}
+                style={{ position: 'relative' }}
+              >
+                ?
+              </button>
+              {showTooltip && (
+                <>
+                  <span className="ml-2 text-[#b5bac1] text-xs font-semibold">Need some help?</span>
+                  <div className="absolute left-1/2 -translate-x-1/2 top-8 z-50 bg-[#23272a] border border-[#42454a] rounded shadow-lg p-3 text-xs text-[#f2f3f5] min-w-[420px]" style={{ whiteSpace: 'normal' }}>
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr>
+                          <th className="text-left pb-1">Field</th>
+                          <th className="text-left pb-1">Required</th>
+                          <th className="text-left pb-1">Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {utmFieldTable.map(row => (
+                          <tr key={row.field}>
+                            <td className="pr-2 font-mono text-[#19d89f]">{row.field}</td>
+                            <td className="pr-2">{row.required ? '✅ Yes' : '❌ Optional'}</td>
+                            <td>{row.desc}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
         <div className="bg-[#23272a] shadow-md rounded-b-lg px-8 pt-6 pb-8 w-full min-h-[600px] flex flex-col justify-start">
           {/* Single Tab */}
@@ -516,47 +559,6 @@ export default function Home() {
                       </motion.span>
                     ))}
                   </AnimatePresence>
-                </div>
-              </div>
-              {/* Tooltip above button */}
-              <div className="w-full flex flex-row justify-end mb-2">
-                <div className="flex items-center gap-2 relative">
-                  <button
-                    type="button"
-                    aria-label="Show UTM field help"
-                    className="w-5 h-5 flex items-center justify-center rounded-full bg-[#23272a] border border-[#42454a] text-[#19d89f] text-xs font-bold cursor-pointer hover:bg-[#383a40] focus:outline-none"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    onFocus={() => setShowTooltip(true)}
-                    onBlur={() => setShowTooltip(false)}
-                    tabIndex={0}
-                    style={{ position: 'relative' }}
-                  >
-                    ?
-                  </button>
-                  {showTooltip && (
-                    <div className="absolute left-1/2 -translate-x-1/2 top-8 z-50 bg-[#23272a] border border-[#42454a] rounded shadow-lg p-3 text-xs text-[#f2f3f5] min-w-[420px]" style={{ whiteSpace: 'normal' }}>
-                      <div className="font-bold text-[#19d89f] mb-2 text-sm">Need some help?</div>
-                      <table className="w-full border-collapse">
-                        <thead>
-                          <tr>
-                            <th className="text-left pb-1">Field</th>
-                            <th className="text-left pb-1">Required</th>
-                            <th className="text-left pb-1">Description</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {utmFieldTable.map(row => (
-                            <tr key={row.field}>
-                              <td className="pr-2 font-mono text-[#19d89f]">{row.field}</td>
-                              <td className="pr-2">{row.required ? '✅ Yes' : '❌ Optional'}</td>
-                              <td>{row.desc}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
                 </div>
               </div>
               <button
