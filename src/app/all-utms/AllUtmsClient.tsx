@@ -99,7 +99,6 @@ export default function AllUtmsClient() {
         transition={{ duration: 0.4, ease: "easeInOut" }}
         className="min-h-screen flex flex-col items-center bg-[#313338] p-4 text-[#f2f3f5]"
       >
-        <h1 className="text-2xl font-extrabold mb-6" style={{ color: '#19d89f' }}>Existing UTM&apos;s</h1>
         <div className="w-full max-w-6xl bg-[#23272a] rounded shadow p-6 mb-8">
           <div className="flex flex-wrap gap-4 mb-4">
             <select
