@@ -163,6 +163,7 @@ export default function Home() {
   const [bulkResults, setBulkResults] = useState<string[][]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [advancedMode, setAdvancedMode] = useState(false);
   const [bulkAdvancedFields, setBulkAdvancedFields] = useState<{ [key: string]: string }>({});
 
