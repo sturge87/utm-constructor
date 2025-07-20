@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import JoeAvatar from "../components/JoeAvatar";
-import Link from "next/link";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -136,10 +135,11 @@ const utmFieldTable = [
   { field: 'utm_source', required: true, desc: 'Where the traffic comes from (e.g., google, linkedin, newsletter)' },
   { field: 'utm_medium', required: true, desc: 'The channel or type of traffic (e.g., cpc, email, social, referral)' },
   { field: 'utm_campaign', required: true, desc: 'Name of the marketing initiative (e.g., q3_launch, summer_promo)' },
-  { field: 'placement', required: false, desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
   { field: 'utm_content', required: false, desc: 'Used for A/B testing or differentiating creatives (e.g., blue_cta, version_b)' },
+  { field: 'utm_term', required: false, desc: 'Used for paid search to capture keywords or targeting terms' },
 ];
 const advancedFields = [
+  { field: 'placement', desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
   { field: 'audience_segment', desc: 'Custom field for targeted audience (e.g., product_managers, test_automation_buyers)' },
   { field: 'geo', desc: 'Geo-targeting code (e.g., US, EU, SEA)' },
   { field: 'device', desc: 'Optional device breakout (e.g., mobile, desktop)' },
@@ -163,7 +163,6 @@ export default function Home() {
   const [bulkResults, setBulkResults] = useState<string[][]>([]);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [advancedMode, setAdvancedMode] = useState(false);
   const [bulkAdvancedFields, setBulkAdvancedFields] = useState<{ [key: string]: string }>({});
 
@@ -336,16 +335,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <div className="w-full flex flex-row items-center justify-between px-6 py-3 bg-[#23272a]">
-        <span className="text-2xl font-extrabold text-[#19d89f]">UTMForge</span>
-        <div className="flex gap-6 items-center">
-          <Link href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</Link>
-          <a href="/all-utms" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">All UTMs</a>
-          <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">GitHub</a>
-        </div>
+      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-end mb-2 mt-[60px]">
+        <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
+        <label className="relative inline-flex items-center cursor-pointer ml-2">
+          <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} className="sr-only peer" />
+          <div className="w-11 h-6 bg-[#383a40] peer-focus:outline-none rounded-full peer peer-checked:bg-[#19d89f] transition"></div>
+          <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
+        </label>
       </div>
       {/* Tabs + Generator Container */}
-      <div className="w-full max-w-5xl mx-auto mt-[100px]">
+      <div className="w-full max-w-5xl mx-auto mt-8">
         <div className="flex w-full items-center">
           <button
             className={`flex-1 py-3 rounded-tl-lg rounded-tr-none font-semibold border-b-2 transition ${activeTab === 'single' ? 'bg-[#23272a] text-[#f2f3f5] border-[#19d89f]' : 'bg-[#2b2d31] text-[#b5bac1] border-transparent'}`}
@@ -360,7 +359,7 @@ export default function Home() {
             Bulk
           </button>
         </div>
-        <div className="bg-[#23272a] shadow-md rounded-b-lg p-10 w-full min-h-[600px] flex flex-col justify-start relative">
+        <div className="bg-[#23272a] shadow-md rounded-b-lg p-6 w-full min-h-[600px] flex flex-col justify-start relative">
           {/* Always show '? Need some help?' in top right, 15px from top/right */}
           <div className="absolute" style={{ top: 15, right: 15, zIndex: 10 }}>
             <div className="flex items-center gap-2">
@@ -403,12 +402,14 @@ export default function Home() {
             </div>
           </div>
           {/* Add extra space above generator fields */}
-          <div className="mt-8">
+          <div className="mt-4">
             {/* Single Tab */}
             {activeTab === 'single' && (
-              <form className="flex flex-row flex-wrap gap-2 items-end" onSubmit={handleGenerate}>
+              <form className="flex flex-row flex-wrap gap-3 w-full items-end" onSubmit={handleGenerate}>
                 <div className="flex flex-col w-48">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">Website URL <span className="text-red-400">*</span></label>
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">
+                    Website URL <span className="text-red-400">*</span>
+                  </label>
                   <input
                     className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                     id="url"
@@ -424,7 +425,7 @@ export default function Home() {
                     <span className="text-red-400 text-xs mt-1">{urlError}</span>
                   )}
                 </div>
-                <div className="flex flex-col w-32">
+                <div className="flex flex-col w-40">
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="source">
                     Source <span className="text-red-400">*</span>
                   </label>
@@ -442,26 +443,7 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-col w-32">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
-                    Medium <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                    id="medium"
-                    name="medium"
-                    required
-                    value={fields.medium}
-                    onChange={handleChange}
-                    disabled={!fields.source}
-                  >
-                    <option value="" disabled>Select medium</option>
-                    {filteredMediumOptions.map(opt => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col w-40">
+                <div className="flex flex-col w-48">
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
                     Campaign <span className="text-red-400">*</span>
                   </label>
@@ -480,29 +462,54 @@ export default function Home() {
                   </select>
                 </div>
                 <div className="flex flex-col w-40">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="placement">Placement</label>
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
+                    Medium <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="medium"
+                    name="medium"
+                    required
+                    value={fields.medium}
+                    onChange={handleChange}
+                    disabled={!fields.source}
+                  >
+                    <option value="" disabled>Select medium</option>
+                    {filteredMediumOptions.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col w-48">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
+                    Content
+                  </label>
                   <input
                     className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                    id="placement"
-                    name="placement"
+                    id="content"
+                    name="content"
                     type="text"
-                    value={fields.placement || ''}
+                    value={fields.content}
                     onChange={handleChange}
-                    placeholder="Optional placement"
+                    placeholder="Optional content value"
                   />
                 </div>
                 {advancedMode && (
-                  <div className="flex flex-col w-40">
-                    <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">Content</label>
-                    <input
-                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                      id="content"
-                      name="content"
-                      type="text"
-                      value={fields.content}
-                      onChange={handleChange}
-                      placeholder="Optional content value"
-                    />
+                  <div className="flex flex-wrap gap-4 w-full mt-2">
+                    {advancedFields.map(f => (
+                      <div className="flex flex-col w-40" key={f.field}>
+                        <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={f.field}>{f.field}</label>
+                        <input
+                          className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                          id={f.field}
+                          name={f.field}
+                          type="text"
+                          value={fields[f.field] || ''}
+                          onChange={handleChange}
+                          placeholder={f.desc}
+                        />
+                      </div>
+                    ))}
                   </div>
                 )}
                 {/* Live UTM Preview (hidden on mobile) */}
@@ -519,8 +526,8 @@ export default function Home() {
                       {fields.url || 'yourwebsite.com/page'}
                     </motion.span>
                     <AnimatePresence>
-                      {[fields.source, fields.medium, fields.campaign, fields.placement].filter(Boolean).map((val, idx) => {
-                        const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_placement='];
+                      {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
+                        const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
                         return (
                           <motion.span
                             key={val as string}

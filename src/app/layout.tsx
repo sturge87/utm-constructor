@@ -23,15 +23,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <nav className="flex items-center justify-between p-4 bg-[#23272a] text-[#f2f3f5] border-b border-[#42454a]">
-          <Link href="/" className="text-xl font-bold text-[#19d89f]">UTM Constructor</Link>
-          <div className="flex gap-4">
-            <Link href="/all-utms" className="hover:underline text-[#f2f3f5]">All UTMs</Link>
-            <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="hover:underline text-[#f2f3f5]">GitHub</a>
+        <nav className="w-full flex items-center justify-between px-6 py-3 bg-[#23272a] border-b border-[#23272a]">
+          <span className="text-2xl font-extrabold text-[#19d89f]">UTMForge</span>
+          <div className="flex items-center gap-6">
+            <a href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</a>
+            <a href="/all-utms" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">All UTMs</a>
+            <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">GitHub</a>
           </div>
         </nav>
         <PageTransitionWrapper>
-          {children}
+        {children}
         </PageTransitionWrapper>
       </body>
     </html>
