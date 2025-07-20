@@ -336,7 +336,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
       <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-between mb-2 mt-[10vh]">
-        <h1 className="text-4xl font-extrabold mb-0 text-[#19d89f]">Generate only compliant UTM&apos;s for all Katalon Campaigns.</h1>
+        {/* Remove the H1 heading from the generator page */}
         <div className="flex items-center gap-2">
           <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
           <label className="relative inline-flex items-center cursor-pointer">
