@@ -335,15 +335,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-between mb-2 mt-[10vh]">
-        <div className="flex items-center gap-2">
-          <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} className="sr-only peer" />
-            <div className="w-11 h-6 bg-[#383a40] peer-focus:outline-none rounded-full peer peer-checked:bg-[#19d89f] transition"></div>
-            <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
-          </label>
-        </div>
+      {/* Move Advanced Mode toggle above generator */}
+      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-end mb-2 mt-[60px]">
+        <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
+        <label className="relative inline-flex items-center cursor-pointer ml-2">
+          <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} className="sr-only peer" />
+          <div className="w-11 h-6 bg-[#383a40] peer-focus:outline-none rounded-full peer peer-checked:bg-[#19d89f] transition"></div>
+          <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
+        </label>
       </div>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-5xl mx-auto mt-[100px]">
