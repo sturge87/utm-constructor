@@ -335,7 +335,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      {/* Move Advanced Mode toggle above generator */}
       <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-end mb-2 mt-[60px]">
         <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
         <label className="relative inline-flex items-center cursor-pointer ml-2">
