@@ -27,6 +27,12 @@ function buildUtmUrl(fields: typeof initialFields) {
   urlObj.searchParams.set("utm_medium", fields.medium);
   urlObj.searchParams.set("utm_campaign", fields.campaign);
   if (fields.content) urlObj.searchParams.set("utm_content", fields.content);
+  if (fields.utm_term) urlObj.searchParams.set("utm_term", fields.utm_term);
+  if (fields.placement) urlObj.searchParams.set("placement", fields.placement);
+  if (fields.audience_segment) urlObj.searchParams.set("audience_segment", fields.audience_segment);
+  if (fields.geo) urlObj.searchParams.set("geo", fields.geo);
+  if (fields.device) urlObj.searchParams.set("device", fields.device);
+  if (fields.matchtype) urlObj.searchParams.set("matchtype", fields.matchtype);
   return urlObj.toString();
 }
 
@@ -138,8 +144,6 @@ const advancedFields = [
   { field: 'geo', desc: 'Geo-targeting code (e.g., US, EU, SEA)' },
   { field: 'device', desc: 'Optional device breakout (e.g., mobile, desktop)' },
   { field: 'matchtype', desc: 'Paid search only (e.g., exact, phrase, broad)' },
-  { field: 'adgroup', desc: 'Paid search ad group identifier' },
-  { field: 'creative_id', desc: 'Asset/creative ID used in analytics naming conventions' },
 ];
 
 export default function Home() {
@@ -498,6 +502,19 @@ export default function Home() {
                         </motion.span>
                       );
                     })}
+                    {advancedMode && advancedFields.map(f => fields[f.field] && (
+                      <motion.span
+                        key={f.field}
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 + advancedFields.indexOf(f) * 0.07 }}
+                        className="inline-block"
+                        style={{ color: '#19d89f' }}
+                      >
+                        &amp;{f.field}={fields[f.field]}
+                      </motion.span>
+                    ))}
                   </AnimatePresence>
                 </div>
               </div>
@@ -518,7 +535,8 @@ export default function Home() {
                     ?
                   </button>
                   {showTooltip && (
-                    <div className="absolute right-0 top-8 z-50 bg-[#23272a] border border-[#42454a] rounded shadow-lg p-3 text-xs text-[#f2f3f5] min-w-[320px]" style={{ whiteSpace: 'normal' }}>
+                    <div className="absolute left-1/2 -translate-x-1/2 top-8 z-50 bg-[#23272a] border border-[#42454a] rounded shadow-lg p-3 text-xs text-[#f2f3f5] min-w-[420px]" style={{ whiteSpace: 'normal' }}>
+                      <div className="font-bold text-[#19d89f] mb-2 text-sm">Need some help?</div>
                       <table className="w-full border-collapse">
                         <thead>
                           <tr>
@@ -543,7 +561,7 @@ export default function Home() {
               </div>
               <button
                 type="submit"
-                className="h-10 px-6 bg-[#5865f2] hover:bg-[#4752c4] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
+                className="w-full h-10 px-6 bg-[#5865f2] hover:bg-[#4752c4] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
               >
                 Generate UTM
               </button>
