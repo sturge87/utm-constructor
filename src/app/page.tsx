@@ -135,11 +135,10 @@ const utmFieldTable = [
   { field: 'utm_source', required: true, desc: 'Where the traffic comes from (e.g., google, linkedin, newsletter)' },
   { field: 'utm_medium', required: true, desc: 'The channel or type of traffic (e.g., cpc, email, social, referral)' },
   { field: 'utm_campaign', required: true, desc: 'Name of the marketing initiative (e.g., q3_launch, summer_promo)' },
+  { field: 'placement', required: false, desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
   { field: 'utm_content', required: false, desc: 'Used for A/B testing or differentiating creatives (e.g., blue_cta, version_b)' },
-  { field: 'utm_term', required: false, desc: 'Used for paid search to capture keywords or targeting terms' },
 ];
 const advancedFields = [
-  { field: 'placement', desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
   { field: 'audience_segment', desc: 'Custom field for targeted audience (e.g., product_managers, test_automation_buyers)' },
   { field: 'geo', desc: 'Geo-targeting code (e.g., US, EU, SEA)' },
   { field: 'device', desc: 'Optional device breakout (e.g., mobile, desktop)' },
@@ -335,13 +334,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-end mb-2 mt-[60px]">
-        <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
-        <label className="relative inline-flex items-center cursor-pointer ml-2">
-          <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} className="sr-only peer" />
-          <div className="w-11 h-6 bg-[#383a40] peer-focus:outline-none rounded-full peer peer-checked:bg-[#19d89f] transition"></div>
-          <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
-        </label>
+      <div className="w-full flex flex-row items-center justify-between px-6 py-3 bg-[#23272a]">
+        <span className="text-2xl font-extrabold text-[#19d89f]">UTMForge</span>
+        <div className="flex gap-6 items-center">
+          <a href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</a>
+          <a href="/all-utms" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">All UTMs</a>
+          <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">GitHub</a>
+        </div>
       </div>
       {/* Tabs + Generator Container */}
       <div className="w-full max-w-5xl mx-auto mt-[100px]">
@@ -405,11 +404,9 @@ export default function Home() {
           <div className="mt-8">
             {/* Single Tab */}
             {activeTab === 'single' && (
-              <form className="flex flex-row flex-wrap gap-4 items-end" onSubmit={handleGenerate}>
+              <form className="flex flex-row flex-wrap gap-2 items-end" onSubmit={handleGenerate}>
                 <div className="flex flex-col w-48">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">
-                    Website URL <span className="text-red-400">*</span>
-                  </label>
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="url">Website URL <span className="text-red-400">*</span></label>
                   <input
                     className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
                     id="url"
@@ -425,7 +422,7 @@ export default function Home() {
                     <span className="text-red-400 text-xs mt-1">{urlError}</span>
                   )}
                 </div>
-                <div className="flex flex-col w-40">
+                <div className="flex flex-col w-32">
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="source">
                     Source <span className="text-red-400">*</span>
                   </label>
@@ -443,25 +440,7 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-col w-48">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
-                    Campaign <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                    id="campaign"
-                    name="campaign"
-                    required
-                    value={fields.campaign}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>Select campaign</option>
-                    {campaignOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col w-40">
+                <div className="flex flex-col w-32">
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
                     Medium <span className="text-red-400">*</span>
                   </label>
@@ -480,36 +459,48 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-col w-48">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
-                    Content
+                <div className="flex flex-col w-40">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
+                    Campaign <span className="text-red-400">*</span>
                   </label>
+                  <select
+                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                    id="campaign"
+                    name="campaign"
+                    required
+                    value={fields.campaign}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>Select campaign</option>
+                    {campaignOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col w-40">
+                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="placement">Placement</label>
                   <input
                     className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                    id="content"
-                    name="content"
+                    id="placement"
+                    name="placement"
                     type="text"
-                    value={fields.content}
+                    value={fields.placement || ''}
                     onChange={handleChange}
-                    placeholder="Optional content value"
+                    placeholder="Optional placement"
                   />
                 </div>
                 {advancedMode && (
-                  <div className="flex flex-wrap gap-4 w-full mt-2">
-                    {advancedFields.map(f => (
-                      <div className="flex flex-col w-40" key={f.field}>
-                        <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={f.field}>{f.field}</label>
-                        <input
-                          className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                          id={f.field}
-                          name={f.field}
-                          type="text"
-                          value={fields[f.field] || ''}
-                          onChange={handleChange}
-                          placeholder={f.desc}
-                        />
-                      </div>
-                    ))}
+                  <div className="flex flex-col w-40">
+                    <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">Content</label>
+                    <input
+                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                      id="content"
+                      name="content"
+                      type="text"
+                      value={fields.content}
+                      onChange={handleChange}
+                      placeholder="Optional content value"
+                    />
                   </div>
                 )}
                 {/* Live UTM Preview (hidden on mobile) */}
@@ -526,8 +517,8 @@ export default function Home() {
                       {fields.url || 'yourwebsite.com/page'}
                     </motion.span>
                     <AnimatePresence>
-                      {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
-                        const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
+                      {[fields.source, fields.medium, fields.campaign, fields.placement].filter(Boolean).map((val, idx) => {
+                        const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_placement='];
                         return (
                           <motion.span
                             key={val as string}
