@@ -347,7 +347,7 @@ export default function Home() {
         </div>
       </div>
       {/* Tabs + Generator Container */}
-      <div className="w-full max-w-5xl mx-auto mt-8">
+      <div className="w-full max-w-5xl mx-auto mt-[100px]">
         <div className="flex w-full items-center">
           <button
             className={`flex-1 py-3 rounded-tl-lg rounded-tr-none bg-[#23272a] text-[#f2f3f5] font-semibold border-b-2 ${activeTab === 'single' ? 'border-[#19d89f]' : 'border-transparent'} transition`}
