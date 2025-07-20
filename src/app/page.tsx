@@ -62,18 +62,18 @@ const sourceOptions = [
 
 // Renewed UTM medium options by source
 const mediumBySource: Record<string, string[]> = {
-  google:     ["cpc", "display", "retargeting", "paid_social", "referral", "syndication"],
-  bing:       ["cpc", "display", "retargeting", "referral"],
-  linkedin:   ["paid_social", "social", "referral", "influencer", "retargeting"],
-  facebook:   ["paid_social", "social", "referral", "influencer", "retargeting"],
-  twitter:    ["paid_social", "social", "referral", "influencer", "retargeting"],
+  google: ["cpc", "display", "retargeting", "paid_social", "referral", "syndication"],
+  bing: ["cpc", "display", "retargeting", "referral"],
+  linkedin: ["paid_social", "social", "referral", "influencer", "retargeting"],
+  facebook: ["paid_social", "social", "referral", "influencer", "retargeting"],
+  twitter: ["paid_social", "social", "referral", "influencer", "retargeting"],
   newsletter: ["email", "referral", "syndication"],
-  mailchimp:  ["email", "referral", "syndication"],
-  hubspot:    ["email", "referral", "syndication"],
-  g2:         ["referral", "display", "syndication"],
-  gartner:    ["referral", "display", "syndication"],
-  reddit:     ["social", "referral", "retargeting"],
-  quora:      ["social", "referral", "retargeting"],
+  mailchimp: ["email", "referral", "syndication"],
+  hubspot: ["email", "referral", "syndication"],
+  g2: ["referral", "display", "syndication"],
+  gartner: ["referral", "display", "syndication"],
+  reddit: ["social", "referral", "retargeting"],
+  quora: ["social", "referral", "retargeting"],
 };
 // All unique mediums for bulk UI
 const allMediums = Array.from(new Set(Object.values(mediumBySource).flat()));
@@ -799,5 +799,6 @@ export default function Home() {
         </div>
         <JoeAvatar />
       </div>
-    );
-  }
+    </div>
+  );
+}
