@@ -26,8 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <nav className="w-full flex items-center justify-between px-6 py-3 bg-[#23272a] border-b border-[#23272a]">
           <span className="text-2xl font-extrabold text-[#19d89f]">UTMForge</span>
           <div className="flex items-center gap-6">
-            <a href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</a>
-            <a href="/all-utms" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">All UTMs</a>
+            <Link href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</Link>
+            <Link href="/all-utms" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">All UTMs</Link>
             <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">GitHub</a>
           </div>
         </nav>
