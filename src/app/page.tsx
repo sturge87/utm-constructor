@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import JoeAvatar from "../components/JoeAvatar";
+import Link from "next/link";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -337,7 +338,7 @@ export default function Home() {
       <div className="w-full flex flex-row items-center justify-between px-6 py-3 bg-[#23272a]">
         <span className="text-2xl font-extrabold text-[#19d89f]">UTMForge</span>
         <div className="flex gap-6 items-center">
-          <a href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</a>
+          <Link href="/" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">Generator</Link>
           <a href="/all-utms" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">All UTMs</a>
           <a href="https://github.com/sturge87/utm-constructor" target="_blank" rel="noopener noreferrer" className="text-[#f2f3f5] hover:text-[#19d89f] font-semibold">GitHub</a>
         </div>
