@@ -661,21 +661,24 @@ export default function Home() {
                   </div>
                 </div>
                 {advancedMode && (
-                  <div className="flex flex-wrap gap-4 w-full mt-2">
-                    {advancedFields.map(f => (
-                      <div className="flex flex-col w-40" key={f.field}>
-                        <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={`bulk_${f.field}`}>{f.field}</label>
-                        <input
-                          className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                          id={`bulk_${f.field}`}
-                          name={`bulk_${f.field}`}
-                          type="text"
-                          value={bulkAdvancedFields[f.field] || ''}
-                          onChange={e => setBulkAdvancedFields({ ...bulkAdvancedFields, [f.field]: e.target.value })}
-                          placeholder={f.desc}
-                        />
-                      </div>
-                    ))}
+                  <div className="w-full mt-2">
+                    <div className="text-[#b5bac1] text-xs font-bold mb-1">Advanced Fields</div>
+                    <div className="flex flex-wrap gap-4 w-full">
+                      {advancedFields.map(f => (
+                        <div className="flex flex-col w-40" key={f.field}>
+                          <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor={`bulk_${f.field}`}>{f.field}</label>
+                          <input
+                            className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                            id={`bulk_${f.field}`}
+                            name={`bulk_${f.field}`}
+                            type="text"
+                            value={bulkAdvancedFields[f.field] || ''}
+                            onChange={e => setBulkAdvancedFields({ ...bulkAdvancedFields, [f.field]: e.target.value })}
+                            placeholder={f.desc}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
                 <button
