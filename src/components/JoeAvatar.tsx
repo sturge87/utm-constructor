@@ -56,7 +56,7 @@ export default function JoeAvatar() {
           transition: 'transform 0.5s cubic-bezier(.4,2,.3,1), opacity 0.5s',
           transform: visible ? 'translateY(0)' : 'translateY(40px)',
           opacity: visible ? 1 : 0,
-          maxWidth: 140,
+          maxWidth: hovered ? 280 : 140,
           width: '100%',
           padding: 0,
           margin: 0,
@@ -71,12 +71,12 @@ export default function JoeAvatar() {
         <img
           src={hovered ? "/joe.png" : "/joe-idle.png"}
           alt="Joe"
-          width={140}
-          height={140}
+          width={hovered ? 280 : 140}
+          height={hovered ? 280 : 140}
           style={{
             display: 'block',
             width: '100%',
-            maxWidth: 140,
+            maxWidth: hovered ? 280 : 140,
             borderRadius: 0,
             margin: 0,
             padding: 0,
