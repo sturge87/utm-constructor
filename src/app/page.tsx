@@ -335,7 +335,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#313338] p-4 text-[#f2f3f5]">
-      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-end mb-2 mt-[60px]">
+      <div className="w-full max-w-5xl mx-auto flex flex-row items-center justify-end mb-2 mt-[30px]">
         <span className="text-[#b5bac1] text-sm font-semibold">Advanced Mode</span>
         <label className="relative inline-flex items-center cursor-pointer ml-2">
           <input type="checkbox" checked={advancedMode} onChange={e => setAdvancedMode(e.target.checked)} className="sr-only peer" />
@@ -344,7 +344,7 @@ export default function Home() {
         </label>
       </div>
       {/* Tabs + Generator Container */}
-      <div className="w-full max-w-5xl mx-auto mt-8">
+      <div className="w-[90%] max-w-5xl mx-auto mt-8">
         <div className="flex w-full items-center">
           <button
             className={`flex-1 py-3 rounded-tl-lg rounded-tr-none font-semibold border-b-2 transition ${activeTab === 'single' ? 'bg-[#23272a] text-[#f2f3f5] border-[#19d89f]' : 'bg-[#2b2d31] text-[#b5bac1] border-transparent'}`}
@@ -359,7 +359,7 @@ export default function Home() {
             Bulk
           </button>
         </div>
-        <div className="bg-[#23272a] shadow-md rounded-b-lg p-6 w-full min-h-[600px] flex flex-col justify-start relative">
+        <div className="bg-[#23272a] shadow-md rounded-b-lg p-6 w-full min-h-auto flex flex-col justify-start relative">
           {/* Always show '? Need some help?' in top right, 15px from top/right */}
           <div className="absolute" style={{ top: 15, right: 15, zIndex: 10 }}>
             <div className="flex items-center gap-2">
