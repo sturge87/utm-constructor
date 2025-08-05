@@ -11,6 +11,20 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Required parameters by source and medium
+const requiredParamsBySourceMedium: Record<string, Record<string, string[]>> = {
+  google: {
+    search: ["utm_term", "utm_geo", "utm_device"],
+    pmcs: ["utm_term", "utm_geo", "utm_device"],
+    gdn: ["utm_geo", "utm_device"],
+    demandgen: ["utm_geo", "utm_device"],
+    video: ["utm_network", "utm_placement", "utm_geo", "utm_device"],
+  },
+  bing: {
+    search: ["utm_term"],
+  },
+};
+
 type UTM = {
   id: string;
   website_url: string;
@@ -22,23 +36,86 @@ type UTM = {
 };
 
 function buildUtmUrl(utm: UTM) {
-  const url = new URL(utm.website_url);
+  console.log("buildUtmUrl called with UTM:", utm);
   
-  // Handle Meta source mapping
-  let sourceName = utm.utm_source;
-  if (utm.utm_source === "meta_abo" || utm.utm_source === "meta_cbo") {
-    sourceName = "meta";
+  try {
+    let urlStr = utm.website_url.trim();
+    // Ensure protocol
+    if (!/^https?:\/\//i.test(urlStr)) {
+      urlStr = "https://" + urlStr;
+    }
+    // Remove any trailing ? or #
+    urlStr = urlStr.replace(/[?#]+$/, "");
+    // Ensure trailing slash before query params
+    const urlObj = new URL(urlStr);
+    if (!urlObj.pathname.endsWith("/")) {
+      urlObj.pathname += "/";
+    }
+    
+    // Handle Meta source mapping
+    let sourceName = utm.utm_source;
+    if (utm.utm_source === "meta_abo" || utm.utm_source === "meta_cbo") {
+      sourceName = "meta";
+    }
+    urlObj.searchParams.set("utm_source", sourceName);
+    urlObj.searchParams.set("utm_medium", utm.utm_medium);
+    
+    // Handle Bing campaign name modification
+    let campaignName = utm.utm_campaign;
+    if (utm.utm_source === "bing") {
+      campaignName = utm.utm_campaign + "_Bing";
+    }
+    
+    // Handle Meta ABO/CBO logic
+    if (utm.utm_source === "meta_abo") {
+      urlObj.searchParams.set("utm_campaign", "{campaign.name}");
+      urlObj.searchParams.set("utm_content", "{adset.name}");
+    } else if (utm.utm_source === "meta_cbo") {
+      urlObj.searchParams.set("utm_campaign", "{adset.name}");
+      urlObj.searchParams.set("utm_content", "{ad.name}");
+    } else {
+      urlObj.searchParams.set("utm_campaign", campaignName);
+    }
+    
+    if (utm.utm_content) urlObj.searchParams.set("utm_content", utm.utm_content);
+    
+    // Add required parameters based on source and medium
+    const requiredParams = requiredParamsBySourceMedium[utm.utm_source]?.[utm.utm_medium] || [];
+    requiredParams.forEach((param: string) => {
+      switch (param) {
+        case "utm_term":
+          urlObj.searchParams.set("utm_term", "{keyword}");
+          break;
+        case "utm_geo":
+          urlObj.searchParams.set("utm_geo", "{loc_physical_ms}");
+          break;
+        case "utm_device":
+          urlObj.searchParams.set("utm_device", "{device}");
+          break;
+        case "utm_network":
+          urlObj.searchParams.set("utm_network", "{network}");
+          break;
+        case "utm_placement":
+          urlObj.searchParams.set("utm_placement", "{placement}");
+          break;
+        case "utm_content":
+          if (utm.utm_medium === "gdn") {
+            urlObj.searchParams.set("utm_content", "{text_field}");
+          }
+          break;
+      }
+    });
+    
+    // Fix URL encoding for bracket parameters
+    let urlString = urlObj.toString();
+    urlString = urlString.replace(/%7B/g, '{').replace(/%7D/g, '}');
+    
+    console.log("Generated URL:", urlString);
+    return urlString;
+  } catch (error) {
+    console.error("Error building UTM URL:", error);
+    return "";
   }
-  url.searchParams.set("utm_source", sourceName);
-  
-  url.searchParams.set("utm_medium", utm.utm_medium);
-  url.searchParams.set("utm_campaign", utm.utm_campaign);
-  if (utm.utm_content) url.searchParams.set("utm_content", utm.utm_content);
-  
-  // Fix URL encoding for bracket parameters
-  let urlString = url.toString();
-  urlString = urlString.replace(/%7B/g, '{').replace(/%7D/g, '}');
-  return urlString;
 }
 
 export default function AllUtmsClient() {
@@ -57,15 +134,29 @@ export default function AllUtmsClient() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    setLoading(true);
-    supabase
-      .from("utms")
-      .select("id, website_url, utm_source, utm_medium, utm_campaign, utm_content, created_at")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setUtms(data || []);
+    const fetchUtms = async () => {
+      console.log("Fetching UTMs from Supabase...");
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("utms")
+          .select("id, website_url, utm_source, utm_medium, utm_campaign, utm_content, created_at")
+          .order("created_at", { ascending: false });
+        
+        if (error) {
+          console.error("Error fetching UTMs:", error);
+        } else {
+          console.log("UTMs fetched successfully:", data);
+          setUtms(data || []);
+        }
+      } catch (error) {
+        console.error("Unexpected error fetching UTMs:", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    
+    fetchUtms();
   }, []);
 
   useEffect(() => {
@@ -94,10 +185,17 @@ export default function AllUtmsClient() {
   const totalPages = Math.ceil(filteredUtms.length / pageSize);
 
   const handleCopy = async (utm: UTM) => {
-    const url = buildUtmUrl(utm);
-    await navigator.clipboard.writeText(url);
-    setCopiedId(utm.id);
-    setTimeout(() => setCopiedId(null), 1500);
+    console.log("handleCopy called for UTM:", utm);
+    try {
+      const url = buildUtmUrl(utm);
+      console.log("Generated URL for copy:", url);
+      await navigator.clipboard.writeText(url);
+      setCopiedId(utm.id);
+      setTimeout(() => setCopiedId(null), 1500);
+      console.log("URL copied to clipboard successfully");
+    } catch (error) {
+      console.error("Error copying URL:", error);
+    }
   };
 
   return (
