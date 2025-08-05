@@ -581,52 +581,84 @@ export default function Home() {
                     ))}
                   </div>
                 )}
-                {/* Live UTM Preview (hidden on mobile) */}
-                <div className="w-full mb-2 hidden sm:block">
-                  <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
-                  <div className="flex flex-row flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]" style={{ gap: '2px' }}>
-                    <motion.span
-                      key={fields.url || 'empty-url'}
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: fields.url ? 1 : 0.95, opacity: fields.url ? 1 : 0.5 }}
-                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                      className="inline-block"
-                    >
-                      {fields.url || 'yourwebsite.com/page'}
-                    </motion.span>
-                    <AnimatePresence>
-                      {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
-                        const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
-                        return (
-                          <motion.span
-                            key={val as string}
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.07 }}
-                            className="inline-block"
-                            style={{ color: '#19d89f' }}
-                          >
-                            {paramNames[idx]}{val}
-                          </motion.span>
-                        );
-                      })}
-                      {advancedMode && advancedFields.map(f => fields[f.field] && (
-                        <motion.span
-                          key={f.field}
-                          initial={{ scale: 0.95, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.95, opacity: 0 }}
-                          transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 + advancedFields.indexOf(f) * 0.07 }}
-                          className="inline-block"
-                          style={{ color: '#19d89f' }}
-                        >
-                          &amp;{f.field}={fields[f.field]}
-                        </motion.span>
-                      ))}
-                    </AnimatePresence>
+                {/* Live UTM Preview (hidden on mobile and in advanced mode) */}
+                {!advancedMode && (
+                  <div className="w-full mb-2 hidden sm:block">
+                    <span className="block text-[#b5bac1] text-xs font-semibold mb-1">Live UTM Preview:</span>
+                    <div className="flex flex-row flex-wrap items-center bg-[#383a40] rounded px-3 py-2 text-xs font-mono text-[#f2f3f5]" style={{ gap: '2px' }}>
+                      <motion.span
+                        key={fields.url || 'empty-url'}
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: fields.url ? 1 : 0.95, opacity: fields.url ? 1 : 0.5 }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        className="inline-block"
+                      >
+                        {fields.url || 'yourwebsite.com/page'}
+                      </motion.span>
+                      <AnimatePresence>
+                        {[fields.source, fields.medium, fields.campaign, fields.content].filter(Boolean).map((val, idx) => {
+                          const paramNames = ['?utm_source=', '&utm_medium=', '&utm_campaign=', '&utm_content='];
+                          return (
+                            <motion.span
+                              key={val as string}
+                              initial={{ scale: 0.95, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.95, opacity: 0 }}
+                              transition={{ duration: 0.25, ease: 'easeOut', delay: idx * 0.07 }}
+                              className="inline-block"
+                              style={{ color: '#19d89f' }}
+                            >
+                              {paramNames[idx]}{val}
+                            </motion.span>
+                          );
+                        })}
+                        {/* Show automatic parameters based on source/medium */}
+                        {(() => {
+                          const requiredParams = requiredParamsBySourceMedium[fields.source]?.[fields.medium] || [];
+                          return requiredParams.map((param, idx) => {
+                            let paramValue = '';
+                            switch (param) {
+                              case "utm_term":
+                                paramValue = "{keyword}";
+                                break;
+                              case "utm_geo":
+                                paramValue = "{loc_physical_ms}";
+                                break;
+                              case "utm_device":
+                                paramValue = "{device}";
+                                break;
+                              case "utm_network":
+                                paramValue = "{network}";
+                                break;
+                              case "utm_placement":
+                                paramValue = "{placement}";
+                                break;
+                              case "utm_content":
+                                if (fields.medium === "gdn") {
+                                  paramValue = "{text_field}";
+                                }
+                                break;
+                            }
+                            if (!paramValue) return null;
+                            return (
+                              <motion.span
+                                key={param}
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: 'easeOut', delay: 0.3 + idx * 0.07 }}
+                                className="inline-block"
+                                style={{ color: '#19d89f' }}
+                              >
+                                &amp;{param}={paramValue}
+                              </motion.span>
+                            );
+                          });
+                        })()}
+                      </AnimatePresence>
+                    </div>
                   </div>
-                </div>
+                )}
                 <button
                   type="submit"
                   className="w-full h-10 px-6 bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
