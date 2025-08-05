@@ -187,12 +187,18 @@ export default function AllUtmsClient() {
   const handleCopy = async (utm: UTM) => {
     console.log("handleCopy called for UTM:", utm);
     try {
+      // Build URL using the same logic as the generator
       const url = buildUtmUrl(utm);
       console.log("Generated URL for copy:", url);
-      await navigator.clipboard.writeText(url);
-      setCopiedId(utm.id);
-      setTimeout(() => setCopiedId(null), 1500);
-      console.log("URL copied to clipboard successfully");
+      
+      if (url) {
+        await navigator.clipboard.writeText(url);
+        setCopiedId(utm.id);
+        setTimeout(() => setCopiedId(null), 1500);
+        console.log("URL copied to clipboard successfully");
+      } else {
+        console.error("Failed to generate URL for copy");
+      }
     } catch (error) {
       console.error("Error copying URL:", error);
     }
@@ -265,30 +271,37 @@ export default function AllUtmsClient() {
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Medium</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Campaign</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Content</TableHead>
+                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Generated URL</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Created</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Copy</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                {paginatedUtms.map(utm => (
-                  <TableRow key={utm.id} className="even:bg-[#23272a]">
-                    <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5]">{utm.website_url}</TableCell>
-                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_source}</TableCell>
-                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_medium}</TableCell>
-                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_campaign}</TableCell>
-                    <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_content}</TableCell>
-                    <TableCell className="p-2 border border-[#42454a] text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</TableCell>
-                    <TableCell className="p-2 border border-[#42454a]">
-                      <button
-                        className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
-                        onClick={() => handleCopy(utm)}
-                        type="button"
-                      >
-                        {copiedId === utm.id ? "Copied!" : "Copy"}
-                      </button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {paginatedUtms.map(utm => {
+                  const generatedUrl = buildUtmUrl(utm);
+                  return (
+                    <TableRow key={utm.id} className="even:bg-[#23272a]">
+                      <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5]">{utm.website_url}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_source}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_medium}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_campaign}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_content}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5] text-xs">
+                        {generatedUrl || "Error generating URL"}
+                      </TableCell>
+                      <TableCell className="p-2 border border-[#42454a] text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a]">
+                        <button
+                          className={`px-2 py-1 rounded bg-[#19d89f] text-white text-xs font-semibold hover:bg-[#15b87f] transition ${copiedId === utm.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                          onClick={() => handleCopy(utm)}
+                          type="button"
+                        >
+                          {copiedId === utm.id ? "Copied!" : "Copy"}
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
                 </TableBody>
               </Table>
               {/* Pagination */}
