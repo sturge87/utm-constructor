@@ -23,11 +23,22 @@ type UTM = {
 
 function buildUtmUrl(utm: UTM) {
   const url = new URL(utm.website_url);
-  url.searchParams.set("utm_source", utm.utm_source);
+  
+  // Handle Meta source mapping
+  let sourceName = utm.utm_source;
+  if (utm.utm_source === "meta_abo" || utm.utm_source === "meta_cbo") {
+    sourceName = "meta";
+  }
+  url.searchParams.set("utm_source", sourceName);
+  
   url.searchParams.set("utm_medium", utm.utm_medium);
   url.searchParams.set("utm_campaign", utm.utm_campaign);
   if (utm.utm_content) url.searchParams.set("utm_content", utm.utm_content);
-  return url.toString();
+  
+  // Fix URL encoding for bracket parameters
+  let urlString = url.toString();
+  urlString = urlString.replace(/%7B/g, '{').replace(/%7D/g, '}');
+  return urlString;
 }
 
 export default function AllUtmsClient() {

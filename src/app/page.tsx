@@ -23,7 +23,12 @@ function buildUtmUrl(fields: typeof initialFields) {
   if (!urlObj.pathname.endsWith("/")) {
     urlObj.pathname += "/";
   }
-  urlObj.searchParams.set("utm_source", fields.source);
+  // Handle Meta source mapping
+  let sourceName = fields.source;
+  if (fields.source === "meta_abo" || fields.source === "meta_cbo") {
+    sourceName = "meta";
+  }
+  urlObj.searchParams.set("utm_source", sourceName);
   urlObj.searchParams.set("utm_medium", fields.medium);
   
   // Handle Bing campaign name modification
@@ -31,7 +36,17 @@ function buildUtmUrl(fields: typeof initialFields) {
   if (fields.source === "bing") {
     campaignName = fields.campaign + "_Bing";
   }
-  urlObj.searchParams.set("utm_campaign", campaignName);
+  
+  // Handle Meta ABO/CBO logic
+  if (fields.source === "meta_abo") {
+    urlObj.searchParams.set("utm_campaign", "{campaign.name}");
+    urlObj.searchParams.set("utm_content", "{adset.name}");
+  } else if (fields.source === "meta_cbo") {
+    urlObj.searchParams.set("utm_campaign", "{adset.name}");
+    urlObj.searchParams.set("utm_content", "{ad.name}");
+  } else {
+    urlObj.searchParams.set("utm_campaign", campaignName);
+  }
   
   if (fields.content) urlObj.searchParams.set("utm_content", fields.content);
   
@@ -83,7 +98,7 @@ const initialFields: { [key: string]: string } = {
 
 // UTM source options
 const sourceOptions = [
-  "google", "bing", "linkedin", "meta", "reddit", "youtube", "community", "academy", "docs", "blog"
+  "google", "bing", "linkedin", "meta_abo", "meta_cbo", "reddit", "youtube", "community", "academy", "docs", "blog"
 ];
 
 // UTM medium options by source
@@ -91,7 +106,8 @@ const mediumBySource: Record<string, string[]> = {
   google: ["search", "pmcs", "gdn", "demandgen", "video"],
   bing: ["search"],
   linkedin: ["paid_social", "social", "referral", "influencer", "retargeting"],
-  meta: ["paid_social", "retargeting", "display"],
+  meta_abo: ["paid"],
+  meta_cbo: ["paid"],
   reddit: ["paid_social", "retargeting", "referral"],
   youtube: ["video", "retargeting", "referral"],
   community: ["referral", "internal-link", "engagement"],
@@ -149,13 +165,13 @@ type UTMInsert = {
 const bulkPresets = [
   {
     name: "Paid Ads",
-    sources: ["google", "bing", "linkedin", "meta"],
-    mediums: ["search", "paid_social", "display", "retargeting"],
+    sources: ["google", "bing", "linkedin", "meta_abo", "meta_cbo"],
+    mediums: ["search", "paid_social", "display", "retargeting", "paid"],
   },
   {
     name: "Social",
-    sources: ["linkedin", "meta", "reddit", "youtube"],
-    mediums: ["paid_social", "social", "influencer", "referral", "retargeting"],
+    sources: ["linkedin", "meta_abo", "meta_cbo", "reddit", "youtube"],
+    mediums: ["paid_social", "social", "influencer", "referral", "retargeting", "paid"],
   },
   {
     name: "Content",
@@ -172,10 +188,7 @@ const utmFieldTable = [
   { field: 'utm_content', required: false, desc: 'Used for A/B testing or differentiating creatives (e.g., blue_cta, version_b)' },
   { field: 'utm_term', required: false, desc: 'Used for paid search to capture keywords or targeting terms' },
 ];
-const advancedFields = [
-  { field: 'placement', desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
-  { field: 'audience_segment', desc: 'Custom field for targeted audience (e.g., product_managers, test_automation_buyers)' },
-];
+const advancedFields: { field: string; desc: string }[] = [];
 
 export default function Home() {
   const [fields, setFields] = useState<{ [key: string]: string }>(initialFields);
@@ -484,37 +497,39 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-col w-48">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
-                    Campaign <span className="text-red-400">*</span>
-                  </label>
-                  {advancedMode ? (
-                    <input
-                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                      id="campaign"
-                      name="campaign"
-                      type="text"
-                      required
-                      value={fields.campaign}
-                      onChange={handleChange}
-                      placeholder="Enter campaign name"
-                    />
-                  ) : (
-                    <select
-                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                      id="campaign"
-                      name="campaign"
-                      required
-                      value={fields.campaign}
-                      onChange={handleChange}
-                    >
-                      <option value="" disabled>Select campaign</option>
-                      {campaignOptions.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
-                  )}
-                </div>
+                {fields.source !== "meta_abo" && fields.source !== "meta_cbo" && (
+                  <div className="flex flex-col w-48">
+                    <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
+                      Campaign <span className="text-red-400">*</span>
+                    </label>
+                    {advancedMode ? (
+                      <input
+                        className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                        id="campaign"
+                        name="campaign"
+                        type="text"
+                        required
+                        value={fields.campaign}
+                        onChange={handleChange}
+                        placeholder="Enter campaign name"
+                      />
+                    ) : (
+                      <select
+                        className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                        id="campaign"
+                        name="campaign"
+                        required
+                        value={fields.campaign}
+                        onChange={handleChange}
+                      >
+                        <option value="" disabled>Select campaign</option>
+                        {campaignOptions.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )}
                 <div className="flex flex-col w-40">
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
                     Medium <span className="text-red-400">*</span>
