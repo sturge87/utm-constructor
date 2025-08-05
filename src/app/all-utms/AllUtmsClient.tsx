@@ -75,9 +75,9 @@ function buildUtmUrl(utm: UTM) {
       urlObj.searchParams.set("utm_content", "{ad.name}");
     } else {
       urlObj.searchParams.set("utm_campaign", campaignName);
+      // Only set utm_content for non-Meta sources
+      if (utm.utm_content) urlObj.searchParams.set("utm_content", utm.utm_content);
     }
-    
-    if (utm.utm_content) urlObj.searchParams.set("utm_content", utm.utm_content);
     
     // Add required parameters based on source and medium
     const requiredParams = requiredParamsBySourceMedium[utm.utm_source]?.[utm.utm_medium] || [];
