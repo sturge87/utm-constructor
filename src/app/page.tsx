@@ -25,7 +25,14 @@ function buildUtmUrl(fields: typeof initialFields) {
   }
   urlObj.searchParams.set("utm_source", fields.source);
   urlObj.searchParams.set("utm_medium", fields.medium);
-  urlObj.searchParams.set("utm_campaign", fields.campaign);
+  
+  // Handle Bing campaign name modification
+  let campaignName = fields.campaign;
+  if (fields.source === "bing") {
+    campaignName = fields.campaign + "_Bing";
+  }
+  urlObj.searchParams.set("utm_campaign", campaignName);
+  
   if (fields.content) urlObj.searchParams.set("utm_content", fields.content);
   
   // Add required parameters based on source and medium
@@ -86,17 +93,21 @@ const sourceOptions = [
 // UTM medium options by source
 const mediumBySource: Record<string, string[]> = {
   google: ["search", "pmcs", "gdn", "demandgen", "video"],
-  bing: ["cpc", "display", "retargeting", "referral"],
+  bing: ["search"],
   linkedin: ["paid_social", "social", "referral", "influencer", "retargeting"],
-  facebook: ["paid_social", "social", "referral", "influencer", "retargeting"],
-  twitter: ["paid_social", "social", "referral", "influencer", "retargeting"],
-  newsletter: ["email", "referral", "syndication"],
-  mailchimp: ["email", "referral", "syndication"],
-  hubspot: ["email", "referral", "syndication"],
-  g2: ["referral", "display", "syndication"],
-  gartner: ["referral", "display", "syndication"],
-  reddit: ["social", "referral", "retargeting"],
-  quora: ["social", "referral", "retargeting"],
+  meta: ["paid_social", "retargeting", "display"],
+  reddit: ["paid_social", "retargeting", "referral"],
+  youtube: ["video", "retargeting", "referral"],
+  quora: ["native"],
+  g2: ["sponsored"],
+  capterra: ["sponsored"],
+  newsletter: ["email", "nurture", "product-update"],
+  community: ["referral", "internal-link", "engagement"],
+  academy: ["internal-link", "product-message", "onboarding"],
+  docs: ["internal-link", "product-message", "technical-content"],
+  product: ["product-message", "in-app-banner"],
+  github: ["referral", "technical"],
+  blog: ["internal-link", "thought-leadership", "seo-cta", "referral"]
 };
 
 // Required UTM parameters by source and medium
@@ -107,6 +118,9 @@ const requiredParamsBySourceMedium: Record<string, Record<string, string[]>> = {
     video: ["utm_network", "utm_placement", "utm_geo", "utm_device"],
     gdn: ["utm_content"],
     pmcs: []
+  },
+  bing: {
+    search: ["utm_term"]
   }
 };
 
@@ -495,19 +509,32 @@ export default function Home() {
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="campaign">
                     Campaign <span className="text-red-400">*</span>
                   </label>
-                  <select
-                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                    id="campaign"
-                    name="campaign"
-                    required
-                    value={fields.campaign}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>Select campaign</option>
-                    {campaignOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
+                  {advancedMode ? (
+                    <input
+                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                      id="campaign"
+                      name="campaign"
+                      type="text"
+                      required
+                      value={fields.campaign}
+                      onChange={handleChange}
+                      placeholder="Enter campaign name"
+                    />
+                  ) : (
+                    <select
+                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                      id="campaign"
+                      name="campaign"
+                      required
+                      value={fields.campaign}
+                      onChange={handleChange}
+                    >
+                      <option value="" disabled>Select campaign</option>
+                      {campaignOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
                 <div className="flex flex-col w-40">
                   <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="medium">
@@ -662,16 +689,26 @@ export default function Home() {
                   </div>
                   <div>
                     <label className="block text-[#b5bac1] text-xs font-bold mb-1">Campaign</label>
-                    <select
-                      className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
-                      value={bulkCampaign}
-                      onChange={e => setBulkCampaign(e.target.value)}
-                    >
-                      <option value="" disabled>Select campaign</option>
-                      {campaignOptions.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
+                    {advancedMode ? (
+                      <input
+                        className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
+                        type="text"
+                        value={bulkCampaign}
+                        onChange={e => setBulkCampaign(e.target.value)}
+                        placeholder="Enter campaign name"
+                      />
+                    ) : (
+                      <select
+                        className="w-full border border-[#42454a] rounded bg-[#383a40] text-[#f2f3f5] px-3 py-2"
+                        value={bulkCampaign}
+                        onChange={e => setBulkCampaign(e.target.value)}
+                      >
+                        <option value="" disabled>Select campaign</option>
+                        {campaignOptions.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-6">
                     <div>
