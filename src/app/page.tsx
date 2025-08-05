@@ -609,7 +609,7 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                {fields.medium !== "search" && (
+                {fields.medium !== "search" && fields.source !== "meta_abo" && fields.source !== "meta_cbo" && (
                   <div className="flex flex-col w-48">
                     <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
                       Content
@@ -621,7 +621,7 @@ export default function Home() {
                       type="text"
                       value={fields.content}
                       onChange={handleChange}
-                      placeholder="Optional content value"
+                      placeholder="Enter content (optional)"
                     />
                   </div>
                 )}
