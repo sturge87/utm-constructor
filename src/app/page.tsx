@@ -66,9 +66,6 @@ function buildUtmUrl(fields: typeof initialFields) {
   if (fields.utm_term) urlObj.searchParams.set("utm_term", fields.utm_term);
   if (fields.placement) urlObj.searchParams.set("placement", fields.placement);
   if (fields.audience_segment) urlObj.searchParams.set("audience_segment", fields.audience_segment);
-  if (fields.geo) urlObj.searchParams.set("geo", fields.geo);
-  if (fields.device) urlObj.searchParams.set("device", fields.device);
-  if (fields.matchtype) urlObj.searchParams.set("matchtype", fields.matchtype);
   
   // Fix URL encoding for bracket parameters
   let urlString = urlObj.toString();
@@ -190,9 +187,6 @@ const utmFieldTable = [
 const advancedFields = [
   { field: 'placement', desc: 'Ad placement (e.g., sidebar, feed, in-stream, discovery)' },
   { field: 'audience_segment', desc: 'Custom field for targeted audience (e.g., product_managers, test_automation_buyers)' },
-  { field: 'geo', desc: 'Geo-targeting code (e.g., US, EU, SEA)' },
-  { field: 'device', desc: 'Optional device breakout (e.g., mobile, desktop)' },
-  { field: 'matchtype', desc: 'Paid search only (e.g., exact, phrase, broad)' },
 ];
 
 export default function Home() {
@@ -251,10 +245,7 @@ export default function Home() {
               content,
               utm_term: '',
               placement: '',
-              audience_segment: '',
-              geo: '',
-              device: '',
-              matchtype: ''
+              audience_segment: ''
             });
             combos.push([
               url,
@@ -555,20 +546,22 @@ export default function Home() {
                     ))}
                   </select>
                 </div>
-                <div className="flex flex-col w-48">
-                  <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
-                    Content
-                  </label>
-                  <input
-                    className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
-                    id="content"
-                    name="content"
-                    type="text"
-                    value={fields.content}
-                    onChange={handleChange}
-                    placeholder="Optional content value"
-                  />
-                </div>
+                {fields.medium !== "search" && (
+                  <div className="flex flex-col w-48">
+                    <label className="block text-[#b5bac1] text-xs font-bold mb-1" htmlFor="content">
+                      Content
+                    </label>
+                    <input
+                      className="shadow appearance-none border border-[#42454a] rounded bg-[#383a40] w-full py-2 px-3 text-[#f2f3f5] leading-tight focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
+                      id="content"
+                      name="content"
+                      type="text"
+                      value={fields.content}
+                      onChange={handleChange}
+                      placeholder="Optional content value"
+                    />
+                  </div>
+                )}
                 {advancedMode && (
                   <div className="flex flex-wrap gap-4 w-full mt-2">
                     {advancedFields.map(f => (
@@ -582,6 +575,7 @@ export default function Home() {
                           value={fields[f.field] || ''}
                           onChange={handleChange}
                           placeholder={f.desc}
+                          style={{ display: fields.medium === "search" && f.field === "placement" ? "none" : "block" }}
                         />
                       </div>
                     ))}
@@ -805,7 +799,7 @@ export default function Home() {
         {/* Saved UTMs */}
         <div className="flex-1">
           {activeTab === 'single' && (
-            <div className="w-full max-w-md mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
+            <div className="w-full mt-0 md:mt-6 bg-[#23272a] rounded shadow px-6 py-6 text-[#f2f3f5]">
               <h2 className="text-lg font-semibold mb-2" style={{ color: '#19d89f' }}>Saved UTMs for this URL</h2>
               {fields.url && (
                 <a
