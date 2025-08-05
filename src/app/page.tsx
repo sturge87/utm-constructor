@@ -62,7 +62,11 @@ function buildUtmUrl(fields: typeof initialFields) {
   if (fields.geo) urlObj.searchParams.set("geo", fields.geo);
   if (fields.device) urlObj.searchParams.set("device", fields.device);
   if (fields.matchtype) urlObj.searchParams.set("matchtype", fields.matchtype);
-  return urlObj.toString();
+  
+  // Fix URL encoding for bracket parameters
+  let urlString = urlObj.toString();
+  urlString = urlString.replace(/%7B/g, '{').replace(/%7D/g, '}');
+  return urlString;
 }
 
 const initialFields: { [key: string]: string } = {
@@ -224,7 +228,20 @@ export default function Home() {
             (u.utm_content || '') === content
           );
           if (!exists) {
-            const utm = buildUtmUrl({ url, source, medium, campaign: bulkCampaign, content });
+            // Use the same buildUtmUrl function for consistency
+            const utm = buildUtmUrl({ 
+              url, 
+              source, 
+              medium, 
+              campaign: bulkCampaign, 
+              content,
+              utm_term: '',
+              placement: '',
+              audience_segment: '',
+              geo: '',
+              device: '',
+              matchtype: ''
+            });
             combos.push([
               url,
               source,
