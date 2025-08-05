@@ -292,7 +292,11 @@ export default function AllUtmsClient() {
                       <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5]">{utm.website_url}</TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_source}</TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_medium}</TableCell>
-                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_campaign}</TableCell>
+                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">
+                        {(utm.utm_source === "meta_abo" || utm.utm_source === "meta_cbo")
+                          ? "Dynamically Produced"
+                          : utm.utm_campaign}
+                      </TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</TableCell>
                       <TableCell className="p-2 border border-[#42454a]">
                         <button
