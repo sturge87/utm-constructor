@@ -10,7 +10,18 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function buildUtmUrl(fields: typeof initialFields) {
-  if (!fields.url || !fields.source || !fields.medium || !fields.campaign) return "";
+  console.log("buildUtmUrl called with fields:", fields);
+  
+  if (!fields.url || !fields.source || !fields.medium) {
+    console.log("Missing required fields:", { url: fields.url, source: fields.source, medium: fields.medium });
+    return "";
+  }
+  
+  // Only require campaign if not meta_abo or meta_cbo
+  if ((fields.source !== "meta_abo" && fields.source !== "meta_cbo") && !fields.campaign) {
+    console.log("Campaign required but missing for source:", fields.source);
+    return "";
+  }
   let urlStr = fields.url.trim();
   // Ensure protocol
   if (!/^https?:\/\//i.test(urlStr)) {
@@ -321,48 +332,86 @@ export default function Home() {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("handleGenerate called with fields:", fields);
+    
     if (!fields.url || !isValidUrlOrDomain(fields.url)) {
+      console.log("Invalid URL:", fields.url);
       setUrlError("Please enter a valid URL or domain.");
       return;
     }
+    
     // Only require campaign if not meta_abo or meta_cbo
     if ((fields.source !== "meta_abo" && fields.source !== "meta_cbo") && !fields.campaign) {
+      console.log("Campaign required but missing for source:", fields.source);
       setUrlError("Please select or enter a campaign.");
       return;
     }
+    
     setGenerating(true);
     try {
+      console.log("Building UTM URL...");
       const url = buildUtmUrl(fields);
-      if (url) {
-        // Check for duplicate
-        const { data: existing } = await supabase.from("utms").select("id").match({
-          website_url: fields.url,
-          utm_source: fields.source,
-          utm_medium: fields.medium,
-          utm_campaign: fields.campaign,
-          utm_content: fields.content || null,
-        });
-        if (!existing || existing.length === 0) {
-          await supabase.from("utms").insert([
-            {
-              website_url: fields.url,
-              utm_source: fields.source,
-              utm_medium: fields.medium,
-              utm_campaign: fields.campaign,
-              utm_content: fields.content || null,
-            },
-          ]);
+      console.log("Generated URL:", url);
+      
+              if (url) {
+          console.log("URL generated successfully, checking for duplicates...");
+          
+          // Check for duplicate
+          const { data: existing, error: duplicateError } = await supabase.from("utms").select("id").match({
+            website_url: fields.url,
+            utm_source: fields.source,
+            utm_medium: fields.medium,
+            utm_campaign: fields.campaign,
+            utm_content: fields.content || null,
+          });
+          
+          if (duplicateError) {
+            console.error("Error checking for duplicates:", duplicateError);
+          } else {
+            console.log("Duplicate check result:", existing);
+          }
+          
+          if (!existing || existing.length === 0) {
+            console.log("No duplicates found, inserting new UTM...");
+            const { error: insertError } = await supabase.from("utms").insert([
+              {
+                website_url: fields.url,
+                utm_source: fields.source,
+                utm_medium: fields.medium,
+                utm_campaign: fields.campaign,
+                utm_content: fields.content || null,
+              },
+            ]);
+            
+            if (insertError) {
+              console.error("Error inserting UTM:", insertError);
+            } else {
+              console.log("UTM inserted successfully");
+            }
+          } else {
+            console.log("Duplicate UTM found, not inserting");
+            alert("This UTM already exists and will not be saved again.");
+          }
+          
+          // Refresh saved UTMs
+          console.log("Refreshing saved UTMs...");
+          const { data, error: refreshError } = await supabase
+            .from("utms")
+            .select("id, utm_source, utm_medium, utm_campaign, utm_content, created_at")
+            .eq("website_url", fields.url)
+            .order("created_at", { ascending: false });
+            
+          if (refreshError) {
+            console.error("Error refreshing saved UTMs:", refreshError);
+          } else {
+            console.log("Saved UTMs refreshed:", data);
+            setSavedUtms(data || []);
+          }
         } else {
-          alert("This UTM already exists and will not be saved again.");
+          console.log("No URL generated, skipping save");
         }
-        // Refresh saved UTMs
-        const { data } = await supabase
-          .from("utms")
-          .select("id, utm_source, utm_medium, utm_campaign, utm_content, created_at")
-          .eq("website_url", fields.url)
-          .order("created_at", { ascending: false });
-        setSavedUtms(data || []);
-      }
+    } catch (error) {
+      console.error("Error in handleGenerate:", error);
     } finally {
       setGenerating(false);
     }
