@@ -27,6 +27,35 @@ function buildUtmUrl(fields: typeof initialFields) {
   urlObj.searchParams.set("utm_medium", fields.medium);
   urlObj.searchParams.set("utm_campaign", fields.campaign);
   if (fields.content) urlObj.searchParams.set("utm_content", fields.content);
+  
+  // Add required parameters based on source and medium
+  const requiredParams = requiredParamsBySourceMedium[fields.source]?.[fields.medium] || [];
+  requiredParams.forEach(param => {
+    switch (param) {
+      case "utm_term":
+        urlObj.searchParams.set("utm_term", "{keyword}");
+        break;
+      case "utm_geo":
+        urlObj.searchParams.set("utm_geo", "{loc_physical_ms}");
+        break;
+      case "utm_device":
+        urlObj.searchParams.set("utm_device", "{device}");
+        break;
+      case "utm_network":
+        urlObj.searchParams.set("utm_network", "{network}");
+        break;
+      case "utm_placement":
+        urlObj.searchParams.set("utm_placement", "{placement}");
+        break;
+      case "utm_content":
+        if (fields.medium === "gdn") {
+          urlObj.searchParams.set("utm_content", "{text_field}");
+        }
+        break;
+    }
+  });
+  
+  // Add other custom fields
   if (fields.utm_term) urlObj.searchParams.set("utm_term", fields.utm_term);
   if (fields.placement) urlObj.searchParams.set("placement", fields.placement);
   if (fields.audience_segment) urlObj.searchParams.set("audience_segment", fields.audience_segment);
@@ -46,23 +75,13 @@ const initialFields: { [key: string]: string } = {
 
 // UTM source options
 const sourceOptions = [
-  "google",
-  "bing",
-  "linkedin",
-  "facebook",
-  "twitter",
-  "newsletter",
-  "mailchimp",
-  "hubspot",
-  "g2",
-  "gartner",
-  "reddit",
-  "quora"
+  "google", "bing", "linkedin", "meta", "reddit", "youtube", "quora", "g2", "capterra",
+  "newsletter", "community", "academy", "docs", "product", "github", "blog"
 ];
 
-// Renewed UTM medium options by source
+// UTM medium options by source
 const mediumBySource: Record<string, string[]> = {
-  google: ["cpc", "display", "retargeting", "paid_social", "referral", "syndication"],
+  google: ["search", "pmcs", "gdn", "demandgen", "video"],
   bing: ["cpc", "display", "retargeting", "referral"],
   linkedin: ["paid_social", "social", "referral", "influencer", "retargeting"],
   facebook: ["paid_social", "social", "referral", "influencer", "retargeting"],
@@ -75,6 +94,18 @@ const mediumBySource: Record<string, string[]> = {
   reddit: ["social", "referral", "retargeting"],
   quora: ["social", "referral", "retargeting"],
 };
+
+// Required UTM parameters by source and medium
+const requiredParamsBySourceMedium: Record<string, Record<string, string[]>> = {
+  google: {
+    search: ["utm_term", "utm_geo", "utm_device"],
+    demandgen: ["utm_geo", "utm_device"],
+    video: ["utm_network", "utm_placement", "utm_geo", "utm_device"],
+    gdn: ["utm_content"],
+    pmcs: []
+  }
+};
+
 // All unique mediums for bulk UI
 const allMediums = Array.from(new Set(Object.values(mediumBySource).flat()));
 
