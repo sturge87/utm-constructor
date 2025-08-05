@@ -96,6 +96,18 @@ function buildUtmUrl(fields: typeof initialFields) {
   // Fix URL encoding for bracket parameters
   let urlString = urlObj.toString();
   urlString = urlString.replace(/%7B/g, '{').replace(/%7D/g, '}');
+  
+  // Additional bracket parameter fixes for Meta and other dynamic parameters
+  urlString = urlString.replace(/%7Bcampaign\.name%7D/g, '{campaign.name}');
+  urlString = urlString.replace(/%7Badset\.name%7D/g, '{adset.name}');
+  urlString = urlString.replace(/%7Bad\.name%7D/g, '{ad.name}');
+  urlString = urlString.replace(/%7Bkeyword%7D/g, '{keyword}');
+  urlString = urlString.replace(/%7Bloc_physical_ms%7D/g, '{loc_physical_ms}');
+  urlString = urlString.replace(/%7Bdevice%7D/g, '{device}');
+  urlString = urlString.replace(/%7Bnetwork%7D/g, '{network}');
+  urlString = urlString.replace(/%7Bplacement%7D/g, '{placement}');
+  urlString = urlString.replace(/%7Btext_field%7D/g, '{text_field}');
+  
   return urlString;
 }
 
