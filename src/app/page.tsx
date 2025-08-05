@@ -209,6 +209,7 @@ export default function Home() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [advancedMode, setAdvancedMode] = useState(false);
   const [bulkAdvancedFields, setBulkAdvancedFields] = useState<{ [key: string]: string }>({});
+  const [generating, setGenerating] = useState(false);
 
   // Helper for all checked sources/mediums
   const toggleBulkSource = (src: string) => setBulkSources(s => s.includes(src) ? s.filter(x => x !== src) : [...s, src]);
@@ -324,36 +325,46 @@ export default function Home() {
       setUrlError("Please enter a valid URL or domain.");
       return;
     }
-    const url = buildUtmUrl(fields);
-    if (url) {
-      // Check for duplicate
-      const { data: existing } = await supabase.from("utms").select("id").match({
-        website_url: fields.url,
-        utm_source: fields.source,
-        utm_medium: fields.medium,
-        utm_campaign: fields.campaign,
-        utm_content: fields.content || null,
-      });
-      if (!existing || existing.length === 0) {
-        await supabase.from("utms").insert([
-          {
-            website_url: fields.url,
-            utm_source: fields.source,
-            utm_medium: fields.medium,
-            utm_campaign: fields.campaign,
-            utm_content: fields.content || null,
-          },
-        ]);
-      } else {
-        alert("This UTM already exists and will not be saved again.");
+    // Only require campaign if not meta_abo or meta_cbo
+    if ((fields.source !== "meta_abo" && fields.source !== "meta_cbo") && !fields.campaign) {
+      setUrlError("Please select or enter a campaign.");
+      return;
+    }
+    setGenerating(true);
+    try {
+      const url = buildUtmUrl(fields);
+      if (url) {
+        // Check for duplicate
+        const { data: existing } = await supabase.from("utms").select("id").match({
+          website_url: fields.url,
+          utm_source: fields.source,
+          utm_medium: fields.medium,
+          utm_campaign: fields.campaign,
+          utm_content: fields.content || null,
+        });
+        if (!existing || existing.length === 0) {
+          await supabase.from("utms").insert([
+            {
+              website_url: fields.url,
+              utm_source: fields.source,
+              utm_medium: fields.medium,
+              utm_campaign: fields.campaign,
+              utm_content: fields.content || null,
+            },
+          ]);
+        } else {
+          alert("This UTM already exists and will not be saved again.");
+        }
+        // Refresh saved UTMs
+        const { data } = await supabase
+          .from("utms")
+          .select("id, utm_source, utm_medium, utm_campaign, utm_content, created_at")
+          .eq("website_url", fields.url)
+          .order("created_at", { ascending: false });
+        setSavedUtms(data || []);
       }
-      // Refresh saved UTMs
-      const { data } = await supabase
-        .from("utms")
-        .select("id, utm_source, utm_medium, utm_campaign, utm_content, created_at")
-        .eq("website_url", fields.url)
-        .order("created_at", { ascending: false });
-      setSavedUtms(data || []);
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -664,9 +675,16 @@ export default function Home() {
                 )}
                 <button
                   type="submit"
-                  className="w-full h-10 px-6 bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition"
+                  className="w-full h-10 px-6 bg-[#19d89f] hover:bg-[#15b87f] text-white font-bold rounded focus:outline-none focus:ring-2 focus:ring-[#19d89f] transition flex items-center justify-center"
+                  disabled={generating}
                 >
-                  Generate UTM
+                  {generating ? (
+                    <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                    </svg>
+                  ) : null}
+                  {generating ? "Generating..." : "Generate UTM"}
                 </button>
               </form>
             )}
