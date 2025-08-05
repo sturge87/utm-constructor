@@ -83,8 +83,7 @@ const initialFields: { [key: string]: string } = {
 
 // UTM source options
 const sourceOptions = [
-  "google", "bing", "linkedin", "meta", "reddit", "youtube", "quora", "g2", "capterra",
-  "newsletter", "community", "academy", "docs", "product", "github", "blog"
+  "google", "bing", "linkedin", "meta", "reddit", "youtube", "community", "academy", "docs", "blog"
 ];
 
 // UTM medium options by source
@@ -95,15 +94,9 @@ const mediumBySource: Record<string, string[]> = {
   meta: ["paid_social", "retargeting", "display"],
   reddit: ["paid_social", "retargeting", "referral"],
   youtube: ["video", "retargeting", "referral"],
-  quora: ["native"],
-  g2: ["sponsored"],
-  capterra: ["sponsored"],
-  newsletter: ["email", "nurture", "product-update"],
   community: ["referral", "internal-link", "engagement"],
   academy: ["internal-link", "product-message", "onboarding"],
   docs: ["internal-link", "product-message", "technical-content"],
-  product: ["product-message", "in-app-banner"],
-  github: ["referral", "technical"],
   blog: ["internal-link", "thought-leadership", "seo-cta", "referral"]
 };
 
@@ -156,29 +149,24 @@ type UTMInsert = {
 const bulkPresets = [
   {
     name: "Paid Ads",
-    sources: ["google", "bing", "linkedin", "facebook", "twitter"],
-    mediums: ["cpc", "paid_social", "display", "retargeting"],
-  },
-  {
-    name: "Email",
-    sources: ["newsletter", "mailchimp", "hubspot"],
-    mediums: ["email", "referral", "syndication"],
+    sources: ["google", "bing", "linkedin", "meta"],
+    mediums: ["search", "paid_social", "display", "retargeting"],
   },
   {
     name: "Social",
-    sources: ["linkedin", "facebook", "twitter", "reddit", "quora"],
+    sources: ["linkedin", "meta", "reddit", "youtube"],
     mediums: ["paid_social", "social", "influencer", "referral", "retargeting"],
   },
   {
-    name: "Review Sites",
-    sources: ["g2", "gartner"],
-    mediums: ["referral", "display", "syndication"],
+    name: "Content",
+    sources: ["community", "academy", "docs", "blog"],
+    mediums: ["referral", "internal-link", "product-message", "technical-content"],
   },
 ];
 
 // Tooltip table content
 const utmFieldTable = [
-  { field: 'utm_source', required: true, desc: 'Where the traffic comes from (e.g., google, linkedin, newsletter)' },
+  { field: 'utm_source', required: true, desc: 'Where the traffic comes from (e.g., google, linkedin, meta)' },
   { field: 'utm_medium', required: true, desc: 'The channel or type of traffic (e.g., cpc, email, social, referral)' },
   { field: 'utm_campaign', required: true, desc: 'Name of the marketing initiative (e.g., q3_launch, summer_promo)' },
   { field: 'utm_content', required: false, desc: 'Used for A/B testing or differentiating creatives (e.g., blue_cta, version_b)' },
