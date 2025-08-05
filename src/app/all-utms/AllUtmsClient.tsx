@@ -281,25 +281,18 @@ export default function AllUtmsClient() {
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Source</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Medium</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Campaign</TableHead>
-                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Content</TableHead>
-                    <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Generated URL</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Created</TableHead>
                     <TableHead className="p-2 border border-[#42454a] text-[#19d89f]">Copy</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                 {paginatedUtms.map(utm => {
-                  const generatedUrl = buildUtmUrl(utm);
                   return (
                     <TableRow key={utm.id} className="even:bg-[#23272a]">
                       <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5]">{utm.website_url}</TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_source}</TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_medium}</TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_campaign}</TableCell>
-                      <TableCell className="p-2 border border-[#42454a] text-[#f2f3f5]">{utm.utm_content}</TableCell>
-                      <TableCell className="p-2 border border-[#42454a] break-all text-[#f2f3f5] text-xs">
-                        {generatedUrl || "Error generating URL"}
-                      </TableCell>
                       <TableCell className="p-2 border border-[#42454a] text-[#b5bac1]">{new Date(utm.created_at).toLocaleString()}</TableCell>
                       <TableCell className="p-2 border border-[#42454a]">
                         <button
